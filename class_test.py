@@ -36,5 +36,10 @@ class VideoGame(Product):
         print(f'Developed by {self.developer} for {self.platform}')
 
 class Pc_Game(Videogame):
-    
+   
+
+
+    def print_description(self):
+        super().print_description()
+        print(f'Requries {self.}') #Fortsätt på def innit
 
