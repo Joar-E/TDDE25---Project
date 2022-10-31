@@ -37,7 +37,7 @@ class VideoGame(Product):
 
 class Pc_Game(Videogame):
     def __init__(self, title, price, developer, platform, requirements):
-    self.requirements = requirements
+        self.requirements = requirements
     def print_description(self):
         super().print_description()
         print(f'Requires {self.requirements}')
@@ -45,7 +45,7 @@ class Pc_Game(Videogame):
 
 products = [
     Book('Harry Potter 1', 20, 'J.K. Rowling'),
-    VideoGame('Call of Duty 42', 200, 'Treyarch', 'PC')
+    VideoGame('Call of Duty 42', 200, 'Treyarch', 'PC'),
     Pc_Game('ctf, 20, sg1-09, PC, Intel HD Graphics 4')
 ]
     
