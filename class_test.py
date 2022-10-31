@@ -46,7 +46,7 @@ class Pc_Game(VideoGame):
 products = [
     Book('Harry Potter 1', 20, 'J.K. Rowling'),
     VideoGame('Call of Duty 42', 200, 'Treyarch', 'PC'),
-    Pc_Game('ctf, 20, sg1-09, PC, Intel HD Graphics 4')
+    Pc_Game('ctf', 20, 'sg1-09', 'PC', 'Intel HD Graphics 4')
 ]
     
 
