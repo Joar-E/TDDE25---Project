@@ -35,7 +35,7 @@ class VideoGame(Product):
         super().print_description()
         print(f'Developed by {self.developer} for {self.platform}')
 
-class Pc_Game(Videogame):
+class Pc_Game(VideoGame):
     def __init__(self, title, price, developer, platform, requirements):
         self.requirements = requirements
     def print_description(self):
