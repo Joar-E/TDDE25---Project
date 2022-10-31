@@ -37,6 +37,7 @@ class VideoGame(Product):
 
 class Pc_Game(VideoGame):
     def __init__(self, title, price, developer, platform, requirements):
+        super().__init__(title, price, developer, platform)
         self.requirements = requirements
     def print_description(self):
         super().print_description()
