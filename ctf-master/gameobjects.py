@@ -154,7 +154,7 @@ class Tank(GamePhysicsObject):
     def stop_moving(self):
         """ Call this function to make the tank stop moving. """
         self.acceleration  = 0
-        self.body.velocity = pymunk.Vec2d.zero()
+        #self.body.velocity = pymunk.Vec2d.zero()
 
     def decelerate(self):
         """ Call this function to make the tank move backward. """
