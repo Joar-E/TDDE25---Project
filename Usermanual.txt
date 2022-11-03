@@ -1,1 +1,17 @@
+Week 1:
 
+class Pc_Game(VideoGame):
+    def __init__(self, title, price, developer, platform, requirements): 
+        super().__init__(title, price, developer, platform)
+        self.requirements = requirements
+    def print_description(self):
+        super().print_description()
+        print(f'Requires {self.requirements}')
+"""
+Klassen vi skapar (Pc_Game) kopplas med den förgående klass videogame som vi bygger på.
+Därefter skapar vi en def på klassen själv där vi lägger till string-parametern 'requirements',
+samt skapar en super() metod på klassen som använder de parametrar vi som fanns till den förgående klassen (VideoGame).
+Vi deklarerar också requirements till self.requirements som hjälper oss till nästa def.
+
+def print_description(self) ska hjälpa till att kunna kalla på Pc_Game på rätt sätt!
+"""
