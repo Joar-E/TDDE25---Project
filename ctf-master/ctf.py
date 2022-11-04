@@ -38,7 +38,7 @@ tanks_list          = []
 #-- Resize the screen to the size of the current level
 screen = pygame.display.set_mode(current_map.rect().size)
 
-#<INSERT GENERATE BACKGROUND>
+
 #-- Generate the background
 background = pygame.Surface(screen.get_size())
 
@@ -50,7 +50,7 @@ for x in range(0, current_map.width):
         # image at the coordinates given as the second argument
         background.blit(images.grass,  (x*images.TILE_SIZE, y*images.TILE_SIZE))
 
-#<INSERT CREATE BOXES>
+
 #-- Create the boxes
 for x in range(0, current_map.width):
     for y in range(0,  current_map.height):
@@ -63,7 +63,17 @@ for x in range(0, current_map.width):
             box = gameobjects.get_box_with_type(x, y, box_type, space)
             game_objects_list.append(box)
 
-#<INSERT CREATE TANKS>
+#Creates barriers
+
+static_body = space.static_body
+barrier_list = [pymunk.Segment(static_body, (0, 0), (0, current_map.height), 0.0), 
+pymunk.Segment(static_body, (0, current_map.height), (current_map.width, current_map.height), 0.0),
+pymunk.Segment(static_body, (current_map.width, current_map.height), (current_map.width, 0), 0.0),
+pymunk.Segment(static_body, (current_map.width, 0), (0, 0), 0.0)
+]
+
+space.add(*barrier_list)
+
 #-- Create the tanks
 # Loop over the starting poistion
 for i in range(0, len(current_map.start_positions)):
@@ -77,7 +87,7 @@ for i in range(0, len(current_map.start_positions)):
 
 
 
-#<INSERT CREATE FLAG>
+
 #-- Create the flag
 flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
 game_objects_list.append(flag)
@@ -100,6 +110,11 @@ while running:
     for event in pygame.event.get():
         # Check if we receive a QUIT event (for instance, if the user press the
         # close button of the wiendow) or if the user press the escape key.
+        tanks_list[0].try_grab_flag(flag)
+        
+        if tanks_list[0].has_won():
+            running = False
+        
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
@@ -115,6 +130,11 @@ while running:
 
             elif event.key == K_LEFT:
                 tanks_list[0].turn_left()
+            
+            elif event.key == K_SPACE:
+                tanks_list[0].shoot()
+                
+            
 
 
         elif event.type == KEYUP:
@@ -130,8 +150,8 @@ while running:
             elif event.key == K_LEFT:
                 tanks_list[0].stop_turning()
 
-               
-        tanks_list[0].try_grab_flag(flag)
+             
+        
     #-- Update physics
     if skip_update == 0:
         # Loop over all the game objects and update their speed in function of their
@@ -151,11 +171,11 @@ while running:
 
     #-- Update Display
 
-    #<INSERT DISPLAY BACKGROUND>
+    
     # Display the background on the screen
     screen.blit(background, (0, 0))
 
-    #<INSERT DISPLAY OBJECTS>
+    
     # Update the display of the game objects on the screen
     for obj in game_objects_list:
         obj.update_screen(screen)
