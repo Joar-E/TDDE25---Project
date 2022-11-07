@@ -98,6 +98,45 @@ for i in range(0, len(current_map.start_positions)):
     base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
     game_objects_list.append(base)
 
+
+def collision_bullet_tank(arb, space, data):
+    bullet_shape = arb.shapes[0]
+    tank = arb.shapes[1].parent
+    # print(bullet_shape.parent.tank)
+    # print(tank)
+    if tank != bullet_shape.parent.tank:
+        space.remove(bullet_shape, bullet_shape.body)
+        game_objects_list.remove(bullet_shape.parent)
+    return False
+handler = space.add_collision_handler(1, 2)
+handler.pre_solve = collision_bullet_tank
+
+
+
+def collision_bullet_box(arb, space, data):
+    bullet_shape = arb.shapes[0]
+    box = arb.shapes[1]
+
+    space.remove(bullet_shape, bullet_shape.body)
+    game_objects_list.remove(bullet_shape.parent)
+
+    space.remove(box, box.body)
+    game_objects_list.remove(box.parent)
+    return False
+
+box_handler = space.add_collision_handler(1, 3)
+box_handler.pre_solve = collision_bullet_box
+
+def ind_collision_bullet_box(arb, space, data):
+    bullet_shape = arb.shapes[0]
+    space.remove(bullet_shape, bullet_shape.body)
+    game_objects_list.remove(bullet_shape.parent)
+    return False
+indestructible_handler = space.add_collision_handler(1, 0)
+indestructible_handler.pre_solve = ind_collision_bullet_box
+
+
+
 #----- Main Loop -----#
 
 #-- Control whether the game run
@@ -132,7 +171,8 @@ while running:
                 tanks_list[0].turn_left()
             
             elif event.key == K_SPACE:
-                tanks_list[0].shoot()
+                bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
+                game_objects_list.append(bullet)
                 
             
 

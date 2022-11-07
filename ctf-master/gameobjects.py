@@ -57,7 +57,7 @@ class GamePhysicsObject(GameObject):
         interaction of the objects.
     """
 
-    def __init__(self, x, y, orientation, sprite, space, movable):
+    def __init__(self, x, y, orientation, sprite, space, movable, collision_type):
         """ Takes as parameters the starting coordinate (x,y), the orientation, the sprite (aka the image
             representing the object), the physic engine object (space) and whether the object can be
             moved (movable).
@@ -90,6 +90,7 @@ class GamePhysicsObject(GameObject):
         self.body.angle     = math.radians(orientation)       # orientation is provided in degress, but pymunk expects radians.
         self.shape          = pymunk.Poly(self.body, points)  # Create a polygon shape using the corner of the rectangle
         self.shape.parent = self
+        self.shape.collision_type = collision_type
 
         # Set some value for friction and elasticity, which defines interraction in case of a colision
         #self.shape.friction = 0.5
@@ -137,7 +138,7 @@ class Tank(GamePhysicsObject):
     FLAG_MAX_SPEED = NORMAL_MAX_SPEED * 0.5
 
     def __init__(self, x, y, orientation, sprite, space):
-        super().__init__(x, y, orientation, sprite, space, True)
+        super().__init__(x, y, orientation, sprite, space, True, 2)
         # Define variable used to apply motion to the tanks
         self.acceleration = 0 # 1 forward, 0 for stand still, -1 for backwards
         self.rotation = 0 # 1 clockwise, 0 for no rotation, -1 counter clockwise
@@ -146,6 +147,7 @@ class Tank(GamePhysicsObject):
         self.flag                 = None                      # This variable is used to access the flag object, if the current tank is carrying the flag
         self.max_speed        = Tank.NORMAL_MAX_SPEED     # Impose a maximum speed to the tank
         self.start_position       = pymunk.Vec2d(x, y)        # Define the start position, which is also the position where the tank has to return with the flag
+        
 
     def accelerate(self):
         """ Call this function to make the tank move forward. """
@@ -218,33 +220,42 @@ class Tank(GamePhysicsObject):
     def has_won(self):
         """ Check if the current tank has won (if it is has the flag and it is close to its start position). """
         return self.flag != None and (self.start_position - self.body.position).length < 0.2
-
+    
     def shoot(self, space):
         """ Call this function to shoot a missile (current implementation does nothing ! you need to implement it yourself) """
-        return
+        return Bullet(self.body.position[0], self.body.position[1], self.body.angle, images.bullet, space, self)
+
+        
 
 class Bullet(GamePhysicsObject):
     """Extends GamePhysicsObject to handle bullet objects"""
-    def __init__(self, x, y, orientation, sprite, space):
-        super().__init__(x, y, orientation, images.bullet, space, False)
+    def __init__(self, x, y, orientation, sprite, space, tank):
+        super().__init__(x, y, orientation, sprite, space, True, 1)
+        self.tank = tank
+        self.orientation = math.degrees(self.body.angle)
+        self.velocity = 8.0
+        self.body.velocity = pymunk.Vec2d((0, self.velocity)).rotated(self.orientation)
+        
+        
 
 
 class Box(GamePhysicsObject):
     """ This class extends the GamePhysicsObject to handle box objects. """
 
-    def __init__(self, x, y, sprite, movable, space, destructable):
+    def __init__(self, x, y, sprite, movable, space, destructable, collision_type):
         """ It takes as arguments the coordinate of the starting position of the box (x,y) and the box model (boxmodel). """
-        super().__init__(x, y, 0, sprite, space, movable)
+        super().__init__(x, y, 0, sprite, space, movable, collision_type)
         self.destructable = destructable
+        
 
 def get_box_with_type(x, y, type, space):
     (x, y) = (x + 0.5, y + 0.5) # Offsets the coordinate to the center of the tile
     if type == 1: # Creates a non-movable non-destructable rockbox
-        return Box(x, y, images.rockbox, False, space, False)
+        return Box(x, y, images.rockbox, False, space, False, 0)
     if type == 2: # Creates a movable destructable woodbox
-        return Box(x, y, images.woodbox, True, space, True)
+        return Box(x, y, images.woodbox, True, space, True, 3)
     if type == 3: # Creates a movable non-destructable metalbox
-        return Box(x, y, images.metalbox, True, space, False)
+        return Box(x, y, images.metalbox, True, space, False, 0)
 
 
 
