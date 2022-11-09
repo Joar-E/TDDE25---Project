@@ -217,6 +217,7 @@ class Tank(GamePhysicsObject):
                 flag.is_on_tank     = True
                 self.max_speed  = Tank.FLAG_MAX_SPEED
 
+
     def has_won(self):
         """ Check if the current tank has won (if it is has the flag and it is close to its start position). """
         return self.flag != None and (self.start_position - self.body.position).length < 0.2
@@ -225,6 +226,9 @@ class Tank(GamePhysicsObject):
         """ Call this function to shoot a missile (current implementation does nothing ! you need to implement it yourself) """
         return Bullet(self.body.position[0], self.body.position[1], self.body.angle, images.bullet, space, self)
 
+    def respawn(self):
+        self.flag = None
+        self.body.position = self.start_position 
         
 
 class Bullet(GamePhysicsObject):

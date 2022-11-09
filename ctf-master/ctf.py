@@ -107,6 +107,7 @@ def collision_bullet_tank(arb, space, data):
     if tank != bullet_shape.parent.tank:
         space.remove(bullet_shape, bullet_shape.body)
         game_objects_list.remove(bullet_shape.parent)
+        gameobjects.Tank.respawn(tank)
     return False
 handler = space.add_collision_handler(1, 2)
 handler.pre_solve = collision_bullet_tank
@@ -149,7 +150,8 @@ while running:
     for event in pygame.event.get():
         # Check if we receive a QUIT event (for instance, if the user press the
         # close button of the wiendow) or if the user press the escape key.
-        tanks_list[0].try_grab_flag(flag)
+        for tanks in tanks_list:
+            gameobjects.Tank.try_grab_flag(tanks, flag)
         
         if tanks_list[0].has_won():
             running = False
@@ -173,6 +175,7 @@ while running:
             elif event.key == K_SPACE:
                 bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
                 game_objects_list.append(bullet)
+
                 
             
 
