@@ -26,8 +26,11 @@ import maps
 
 #-- Constants
 FRAMERATE = 50
+#COOLDOWN_FOR_BULLET = 0
 
 #-- Variables
+time_when_shot_t1 = 0
+time_when_shot_t2 = 0
 #   Define the current level
 current_map         = maps.map0
 #   List of all game objects
@@ -174,8 +177,14 @@ while running:
                 tanks_list[0].turn_left()
             
             elif event.key == K_SPACE:
-                bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
-                game_objects_list.append(bullet)
+                if (pygame.time.get_ticks() - time_when_shot_t1) >= 1000:
+                   bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
+                   game_objects_list.append(bullet)
+                   time_when_shot_t1 = pygame.time.get_ticks()
+                # if COOLDOWN_FOR_BULLET == 0:
+                #     bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
+                #     game_objects_list.append(bullet)
+                #     COOLDOWN_FOR_BULLET = FRAMERATE
             
             """Player 2"""
             if event.key == K_w:
@@ -191,8 +200,14 @@ while running:
                 tanks_list[1].turn_left()
             
             elif event.key == K_q:
-                bullet = tanks_list[1].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
-                game_objects_list.append(bullet)
+                if (pygame.time.get_ticks() - time_when_shot_t2) >= 1000:
+                    bullet = tanks_list[1].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
+                    game_objects_list.append(bullet)
+                    time_when_shot_t2 = pygame.time.get_ticks()
+                # if COOLDOWN_FOR_BULLET == 0:
+                #    bullet = tanks_list[1].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
+                #    game_objects_list.append(bullet)
+                #    COOLDOWN_FOR_BULLET = FRAMERATE
   
 
 
@@ -231,8 +246,12 @@ while running:
         for obj in game_objects_list:
             obj.update()
         skip_update = 2
+        #if COOLDOWN_FOR_BULLET > 0:
+         #   COOLDOWN_FOR_BULLET -= 1
     else:
         skip_update -= 1
+        #if COOLDOWN_FOR_BULLET > 0:
+         #   COOLDOWN_FOR_BULLET -= 1
 
     #   Check collisions and update the objects position
     space.step(1 / FRAMERATE)
@@ -255,6 +274,8 @@ while running:
     #Shows the tanks on the screen
     for tank in tanks_list:
         tank.update_screen(screen)
+        
+        
 
     flag.update_screen(screen)
     

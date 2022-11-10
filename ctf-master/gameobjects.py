@@ -241,7 +241,8 @@ class Bullet(GamePhysicsObject):
         super().__init__(x, y, orientation, sprite, space, True, 1)
         self.tank = tank
         self.orientation = math.degrees(self.body.angle)
-        self.velocity = 8.0
+        self.velocity = 7.0
+    def update(self):
         self.body.velocity = pymunk.Vec2d((0, self.velocity)).rotated(self.orientation)
         
         
