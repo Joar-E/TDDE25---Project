@@ -143,7 +143,7 @@ class Tank(GamePhysicsObject):
         self.acceleration = 0 # 1 forward, 0 for stand still, -1 for backwards
         self.rotation = 0 # 1 clockwise, 0 for no rotation, -1 counter clockwise
 
-
+        self.orientation = orientation
         self.flag                 = None                      # This variable is used to access the flag object, if the current tank is carrying the flag
         self.max_speed        = Tank.NORMAL_MAX_SPEED     # Impose a maximum speed to the tank
         self.start_position       = pymunk.Vec2d(x, y)        # Define the start position, which is also the position where the tank has to return with the flag
@@ -156,7 +156,7 @@ class Tank(GamePhysicsObject):
     def stop_moving(self):
         """ Call this function to make the tank stop moving. """
         self.acceleration  = 0
-        #self.body.velocity = pymunk.Vec2d.zero()
+        self.body.velocity = pymunk.Vec2d.zero()
 
     def decelerate(self):
         """ Call this function to make the tank move backward. """
@@ -223,12 +223,16 @@ class Tank(GamePhysicsObject):
         return self.flag != None and (self.start_position - self.body.position).length < 0.2
     
     def shoot(self, space):
-        """ Call this function to shoot a missile (current implementation does nothing ! you need to implement it yourself) """
+        """ Call this function to shoot a missile"""
         return Bullet(self.body.position[0], self.body.position[1], self.body.angle, images.bullet, space, self)
 
     def respawn(self):
         self.flag = None
         self.body.position = self.start_position 
+        self.body.angle = math.radians(self.orientation)
+    
+    def drop_flag(self, flag):
+        flag.is_on_tank = False
         
 
 class Bullet(GamePhysicsObject):

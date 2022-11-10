@@ -102,12 +102,13 @@ for i in range(0, len(current_map.start_positions)):
 def collision_bullet_tank(arb, space, data):
     bullet_shape = arb.shapes[0]
     tank = arb.shapes[1].parent
-    # print(bullet_shape.parent.tank)
-    # print(tank)
+
     if tank != bullet_shape.parent.tank:
         space.remove(bullet_shape, bullet_shape.body)
         game_objects_list.remove(bullet_shape.parent)
         gameobjects.Tank.respawn(tank)
+        gameobjects.Tank.drop_flag(tank, flag)
+
     return False
 handler = space.add_collision_handler(1, 2)
 handler.pre_solve = collision_bullet_tank
@@ -152,14 +153,14 @@ while running:
         # close button of the wiendow) or if the user press the escape key.
         for tanks in tanks_list:
             gameobjects.Tank.try_grab_flag(tanks, flag)
-        
-        if tanks_list[0].has_won():
-            running = False
+            if tanks.has_won():
+                running = False
         
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
         elif event.type == KEYDOWN:
+            """Player 1"""
             if event.key == K_UP:
                 tanks_list[0].accelerate()
 
@@ -175,12 +176,28 @@ while running:
             elif event.key == K_SPACE:
                 bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
                 game_objects_list.append(bullet)
-
-                
             
+            """Player 2"""
+            if event.key == K_w:
+                tanks_list[1].accelerate()
+
+            elif event.key == K_s:
+                tanks_list[1].decelerate()
+
+            elif event.key == K_d:
+                tanks_list[1].turn_right()
+
+            elif event.key == K_a:
+                tanks_list[1].turn_left()
+            
+            elif event.key == K_q:
+                bullet = tanks_list[1].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
+                game_objects_list.append(bullet)
+  
 
 
         elif event.type == KEYUP:
+            """Player 1"""
             if event.key == K_UP:
                 tanks_list[0].stop_moving()
 
@@ -192,7 +209,19 @@ while running:
 
             elif event.key == K_LEFT:
                 tanks_list[0].stop_turning()
+            
+            """Player 2"""
+            if event.key == K_w:
+                tanks_list[1].stop_moving()
 
+            elif event.key == K_s:
+                tanks_list[1].stop_moving()
+
+            elif event.key == K_d:
+                tanks_list[1].stop_turning()
+
+            elif event.key == K_a:
+                tanks_list[1].stop_turning()
              
         
     #-- Update physics
