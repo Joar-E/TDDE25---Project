@@ -211,7 +211,7 @@ class Tank(GamePhysicsObject):
         if(not flag.is_on_tank):
             # Check if the tank is close to the flag
             flag_pos = pymunk.Vec2d(flag.x, flag.y)
-            if((flag_pos - self.body.position).length < 0.5):
+            if((flag_pos - self.body.position).length < 0.8):
                 # Grab the flag !
                 self.flag           = flag
                 flag.is_on_tank     = True
@@ -220,7 +220,7 @@ class Tank(GamePhysicsObject):
 
     def has_won(self):
         """ Check if the current tank has won (if it is has the flag and it is close to its start position). """
-        return self.flag != None and (self.start_position - self.body.position).length < 0.2
+        return self.flag != None and (self.start_position - self.body.position).length < 0.5
     
     def shoot(self, space):
         """ Call this function to shoot a missile"""

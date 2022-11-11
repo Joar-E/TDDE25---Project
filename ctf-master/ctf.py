@@ -31,6 +31,11 @@ FRAMERATE = 50
 #-- Variables
 time_when_shot_t1 = 0
 time_when_shot_t2 = 0
+
+player1 = [0, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE, time_when_shot_t1]
+player2 = [1, K_w, K_s, K_a, K_d, K_q, time_when_shot_t2]
+
+players_list = [player1, player2]
 #   Define the current level
 current_map         = maps.map0
 #   List of all game objects
@@ -103,6 +108,7 @@ for i in range(0, len(current_map.start_positions)):
 
 
 def collision_bullet_tank(arb, space, data):
+    """Handles collisions between tanks and bullets"""
     bullet_shape = arb.shapes[0]
     tank = arb.shapes[1].parent
 
@@ -140,7 +146,56 @@ def ind_collision_bullet_box(arb, space, data):
 indestructible_handler = space.add_collision_handler(1, 0)
 indestructible_handler.pre_solve = ind_collision_bullet_box
 
+def tank_movement_handler(players_list: list()):
+    """Controls the movement for all the tanks"""
+    
+    for player in players_list:
+        tank_index = player[0]
+        forward = player[1]
+        reverse = player[2]
+        turn_left = player[3]
+        turn_right = player[4]
 
+        keys = pygame.key.get_pressed()
+        # rest_player = player[1:-2]
+        # for i in rest_player:
+        #     if event.type == KEYDOWN and event.key == i:
+
+        if keys[forward]:
+            tanks_list[tank_index].accelerate()
+
+        if keys[reverse]:
+            tanks_list[tank_index].decelerate()
+
+        if keys[turn_left]:
+            tanks_list[tank_index].turn_left()
+
+        if keys[turn_right]:
+            tanks_list[tank_index].turn_right()
+        
+        """Stops the tank from moving when th keys are not pressed"""
+        if not keys[forward] and not keys[reverse]:
+            tanks_list[tank_index].stop_moving()
+        
+        if not keys[turn_left] and not keys[turn_right]:
+            tanks_list[tank_index].stop_turning()
+        
+        
+def tank_shooting_handler(players_list: list()):
+    """Controls shooting for all tanks"""
+    for player in players_list:
+        tank_index = player[0]
+        tank_shoot = player[5]
+        time_since_last_shot = player[6]
+
+        keys = pygame.key.get_pressed()
+
+        if keys[tank_shoot]:
+            if (pygame.time.get_ticks() - time_since_last_shot) >= 1000:
+                    bullet = tanks_list[tank_index].shoot(space)
+                    game_objects_list.append(bullet)
+                    time_since_last_shot = pygame.time.get_ticks()
+                    player[6] = time_since_last_shot
 
 #----- Main Loop -----#
 
@@ -162,81 +217,9 @@ while running:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
-        elif event.type == KEYDOWN:
-            """Player 1"""
-            if event.key == K_UP:
-                tanks_list[0].accelerate()
+        tank_movement_handler(players_list)
 
-            elif event.key == K_DOWN:
-                tanks_list[0].decelerate()
-
-            elif event.key == K_RIGHT:
-                tanks_list[0].turn_right()
-
-            elif event.key == K_LEFT:
-                tanks_list[0].turn_left()
-            
-            elif event.key == K_SPACE:
-                if (pygame.time.get_ticks() - time_when_shot_t1) >= 1000:
-                   bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
-                   game_objects_list.append(bullet)
-                   time_when_shot_t1 = pygame.time.get_ticks()
-                # if COOLDOWN_FOR_BULLET == 0:
-                #     bullet = tanks_list[0].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
-                #     game_objects_list.append(bullet)
-                #     COOLDOWN_FOR_BULLET = FRAMERATE
-            
-            """Player 2"""
-            if event.key == K_w:
-                tanks_list[1].accelerate()
-
-            elif event.key == K_s:
-                tanks_list[1].decelerate()
-
-            elif event.key == K_d:
-                tanks_list[1].turn_right()
-
-            elif event.key == K_a:
-                tanks_list[1].turn_left()
-            
-            elif event.key == K_q:
-                if (pygame.time.get_ticks() - time_when_shot_t2) >= 1000:
-                    bullet = tanks_list[1].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
-                    game_objects_list.append(bullet)
-                    time_when_shot_t2 = pygame.time.get_ticks()
-                # if COOLDOWN_FOR_BULLET == 0:
-                #    bullet = tanks_list[1].shoot(space)#gameobjects.Tank.shoot(tanks_list[0], space)
-                #    game_objects_list.append(bullet)
-                #    COOLDOWN_FOR_BULLET = FRAMERATE
-  
-
-
-        elif event.type == KEYUP:
-            """Player 1"""
-            if event.key == K_UP:
-                tanks_list[0].stop_moving()
-
-            elif event.key == K_DOWN:
-                tanks_list[0].stop_moving()
-
-            elif event.key == K_RIGHT:
-                tanks_list[0].stop_turning()
-
-            elif event.key == K_LEFT:
-                tanks_list[0].stop_turning()
-            
-            """Player 2"""
-            if event.key == K_w:
-                tanks_list[1].stop_moving()
-
-            elif event.key == K_s:
-                tanks_list[1].stop_moving()
-
-            elif event.key == K_d:
-                tanks_list[1].stop_turning()
-
-            elif event.key == K_a:
-                tanks_list[1].stop_turning()
+        tank_shooting_handler(players_list)
              
         
     #-- Update physics
@@ -246,12 +229,9 @@ while running:
         for obj in game_objects_list:
             obj.update()
         skip_update = 2
-        #if COOLDOWN_FOR_BULLET > 0:
-         #   COOLDOWN_FOR_BULLET -= 1
     else:
         skip_update -= 1
-        #if COOLDOWN_FOR_BULLET > 0:
-         #   COOLDOWN_FOR_BULLET -= 1
+
 
     #   Check collisions and update the objects position
     space.step(1 / FRAMERATE)
@@ -274,12 +254,9 @@ while running:
     #Shows the tanks on the screen
     for tank in tanks_list:
         tank.update_screen(screen)
-        
-        
+   
 
     flag.update_screen(screen)
-    
-    
     
     
     #   Redisplay the entire screen (see double buffer technique)
