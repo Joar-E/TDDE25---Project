@@ -3,6 +3,7 @@ import pymunk
 from pymunk import Vec2d
 import gameobjects
 from collections import defaultdict, deque
+import maps
 
 # NOTE: use only 'map0' during development!
 
@@ -103,10 +104,21 @@ class Ai:
             A bordering square is only considered accessible if it is grass
             or a wooden box.
         """
-        neighbors = [] # Find the coordinates of the tiles' four neighbors
+        self.coord_vec = coord_vec
+        neighbors = [coord_vec + delta for delta in [(0,1), (-1,0), (0,-1), (1,0)]]
+
+ # Find the coordinates of the tiles' four neighbors
         return filter(self.filter_tile_neighbors, neighbors)
 
     def filter_tile_neighbors (self, coord):
-        return True
+        print(self.currentmap.boxAt(coord[0], coord[1]))
+        if coord[0] <= self.MAX_X and coord[0] >= 0\
+             and coord[1] <= self.MAX_Y and coord[1] >= 0:
+
+            if self.currentmap.boxAt(coord[0], coord[1]) == 0:
+                return True
+            return False
+
+
 
 SimpleAi = Ai # Legacy

@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from pygame.color import *
 import pymunk
-
+from pymunk import Vec2d
 #----- Initialisation -----#
 
 #-- Initialise the display
@@ -24,6 +24,11 @@ import images
 import gameobjects
 import maps
 
+running = True
+
+skip_update = 0
+
+
 #-- Constants
 FRAMERATE = 50
 #COOLDOWN_FOR_BULLET = 0
@@ -41,7 +46,7 @@ current_map         = maps.map0
 #   List of all game objects
 game_objects_list   = []
 tanks_list          = []
-
+ai_list             = []
 
 #-- Resize the screen to the size of the current level
 screen = pygame.display.set_mode(current_map.rect().size)
@@ -83,6 +88,8 @@ pymunk.Segment(static_body, (current_map.width, 0), (0, 0), 0.0)
 space.add(*barrier_list)
 
 #-- Create the tanks
+
+
 # Loop over the starting poistion
 for i in range(0, len(current_map.start_positions)):
     # Get the starting position of the tank "i"
@@ -92,59 +99,21 @@ for i in range(0, len(current_map.start_positions)):
     # Add the tank to the list of tanks
     tanks_list.append(tank)
     game_objects_list.append(tank)
-
-
+    if i > 0:
+        ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
+        ai_list.append(ai_tank)
 
 
 #-- Create the flag
 flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
 game_objects_list.append(flag)
 
-#Create bases
+#-- Create the bases
 for i in range(0, len(current_map.start_positions)):
     position = current_map.start_positions[i]
     base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
     game_objects_list.append(base)
 
-
-def collision_bullet_tank(arb, space, data):
-    """Handles collisions between tanks and bullets"""
-    bullet_shape = arb.shapes[0]
-    tank = arb.shapes[1].parent
-
-    if tank != bullet_shape.parent.tank:
-        space.remove(bullet_shape, bullet_shape.body)
-        game_objects_list.remove(bullet_shape.parent)
-        gameobjects.Tank.respawn(tank)
-        gameobjects.Tank.drop_flag(tank, flag)
-
-    return False
-handler = space.add_collision_handler(1, 2)
-handler.pre_solve = collision_bullet_tank
-
-
-
-def collision_bullet_box(arb, space, data):
-    bullet_shape = arb.shapes[0]
-    box = arb.shapes[1]
-
-    space.remove(bullet_shape, bullet_shape.body)
-    game_objects_list.remove(bullet_shape.parent)
-
-    space.remove(box, box.body)
-    game_objects_list.remove(box.parent)
-    return False
-
-box_handler = space.add_collision_handler(1, 3)
-box_handler.pre_solve = collision_bullet_box
-
-def ind_collision_bullet_box(arb, space, data):
-    bullet_shape = arb.shapes[0]
-    space.remove(bullet_shape, bullet_shape.body)
-    game_objects_list.remove(bullet_shape.parent)
-    return False
-indestructible_handler = space.add_collision_handler(1, 0)
-indestructible_handler.pre_solve = ind_collision_bullet_box
 
 def tank_movement_handler(players_list: list()):
     """Controls the movement for all the tanks"""
@@ -197,12 +166,56 @@ def tank_shooting_handler(players_list: list()):
                     time_since_last_shot = pygame.time.get_ticks()
                     player[6] = time_since_last_shot
 
+
+def collision_bullet_tank(arb, space, data):
+    """Handles collisions between tanks and bullets"""
+    bullet_shape = arb.shapes[0]
+    tank = arb.shapes[1].parent
+
+    if tank != bullet_shape.parent.tank:
+        space.remove(bullet_shape, bullet_shape.body)
+        game_objects_list.remove(bullet_shape.parent)
+        gameobjects.Tank.respawn(tank)
+        gameobjects.Tank.drop_flag(tank, flag)
+
+    return False
+
+
+def collision_bullet_box(arb, space, data):
+    """Handles collisions between bullets and boxes"""
+    bullet_shape = arb.shapes[0]
+    box = arb.shapes[1]
+
+    space.remove(bullet_shape, bullet_shape.body)
+    game_objects_list.remove(bullet_shape.parent)
+
+    space.remove(box, box.body)
+    game_objects_list.remove(box.parent)
+    return False
+
+
+def ind_collision_bullet_box(arb, space, data):
+    """Handels collisions between bullets and indestructable objects"""
+    bullet_shape = arb.shapes[0]
+    space.remove(bullet_shape, bullet_shape.body)
+    game_objects_list.remove(bullet_shape.parent)
+    return False
+
+
+indestructible_c_handler = space.add_collision_handler(1, 0)
+indestructible_c_handler.pre_solve = ind_collision_bullet_box
+
+tank_c_handler = space.add_collision_handler(1, 2)
+tank_c_handler.pre_solve = collision_bullet_tank
+
+box_c_handler = space.add_collision_handler(1, 3)
+box_c_handler.pre_solve = collision_bullet_box
+
 #----- Main Loop -----#
 
-#-- Control whether the game run
-running = True
 
-skip_update = 0
+
+#-- Control whether the game run
 
 while running:
     #-- Handle the events
@@ -220,7 +233,9 @@ while running:
         tank_movement_handler(players_list)
 
         tank_shooting_handler(players_list)
-             
+        
+        for tank_ai in ai_list:
+            ai.Ai.decide(tank_ai)
         
     #-- Update physics
     if skip_update == 0:
