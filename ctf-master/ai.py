@@ -68,7 +68,35 @@ class Ai:
             Edges are calculated as we go, using an external function.
         """
         # To be implemented
+        source_node = self.grid_pos
+        queue = deque()
         shortest_path = []
+        visited_node = set()
+        #target_tile = self.get_target_tile()
+        queue.append((source_node, []))
+        
+        while queue:
+            #print(queue)
+            target, path = queue.popleft()
+            
+            if target == self.get_target_tile():
+                path.append(target)
+                shortest_path = path
+                
+                break
+            
+            neighboring_tiles = self.get_tile_neighbors(target)
+            for tiles in neighboring_tiles:
+                #print(tiles.int_tuple in visited_node)
+                if tiles.int_tuple not in visited_node:
+                    
+                    queue.append((tiles, path + [target])) #path is actually a list but does not yet know it's a list
+                                                           #so we can not append target. But we can make target into a list
+                                                           # and then combine the two lists 
+                    #print(path)
+                    visited_node.add(tiles.int_tuple)
+                    #print(visited_node)
+                    
         return deque(shortest_path)
             
     def get_target_tile(self):
@@ -106,12 +134,12 @@ class Ai:
         """
         self.coord_vec = coord_vec
         neighbors = [coord_vec + delta for delta in [(0,1), (-1,0), (0,-1), (1,0)]]
-
+        
  # Find the coordinates of the tiles' four neighbors
-        return filter(self.filter_tile_neighbors, neighbors)
+        return list(filter(self.filter_tile_neighbors, neighbors))
 
     def filter_tile_neighbors (self, coord):
-        print(self.currentmap.boxAt(coord[0], coord[1]))
+        
         if coord[0] <= self.MAX_X and coord[0] >= 0\
              and coord[1] <= self.MAX_Y and coord[1] >= 0:
 

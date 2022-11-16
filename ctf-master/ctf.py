@@ -213,7 +213,7 @@ box_c_handler.pre_solve = collision_bullet_box
 
 #----- Main Loop -----#
 
-
+print(ai.Ai.find_shortest_path(ai_list[2]))
 
 #-- Control whether the game run
 
