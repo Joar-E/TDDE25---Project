@@ -45,10 +45,10 @@ class Ai:
     def update_grid_pos(self):
         """ This should only be called in the beginning, or at the end of a move_cycle. """
         self.grid_pos = self.get_tile_of_position(self.tank.body.position)
-
+    
     def decide(self):
         """ Main decision function that gets called on every tick of the game. """
-        pass # To be implemented
+        next(self.move_cycle)
 
     def maybe_shoot(self):
         """ Makes a raycast query in front of the tank. If another tank
@@ -56,12 +56,33 @@ class Ai:
         """
         pass # To be implemented
 
+    
     def move_cycle_gen (self):
         """ A generator that iteratively goes through all the required steps
             to move to our goal.
         """ 
+        print("hej")
+        self.tank.body.angle = math.radians(self.tank.orientation)
         while True:
+            path = self.find_shortest_path()
+            if not path:
+                yield
+                continue
+            next_coord = path.popleft() 
+            print(self.grid_pos)
+            print(next_coord)
+            angle_b_v = angle_between_vectors(self.grid_pos, next_coord)
+            print(angle_b_v)
+            p_diff = periodic_difference_of_angles(self.tank.body.angle, angle_b_v)
+            #print('hej2')
+            #print(self.tank.body.angle)
+            #print(p_diff)
+            while (self.tank.body.angle - p_diff) > MIN_ANGLE_DIF :
+                self.tank.turn_left()
+                #print('hej3')
+                yield
             yield
+
         
     def find_shortest_path(self):
         """ A simple Breadth First Search using integer coordinates as our nodes.

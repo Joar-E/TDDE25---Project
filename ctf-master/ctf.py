@@ -3,6 +3,7 @@ from pygame.locals import *
 from pygame.color import *
 import pymunk
 from pymunk import Vec2d
+import math
 #----- Initialisation -----#
 
 #-- Initialise the display
@@ -95,7 +96,7 @@ for i in range(0, len(current_map.start_positions)):
     # Get the starting position of the tank "i"
     pos = current_map.start_positions[i]
     # Create the tank, images.tanks contains the image representing the tank
-    tank = gameobjects.Tank(pos[0], pos[1], pos[2], images.tanks[i], space)
+    tank = gameobjects.Tank(pos[0], pos[1], 0, images.tanks[i], space)#pos[2]
     # Add the tank to the list of tanks
     tanks_list.append(tank)
     game_objects_list.append(tank)
@@ -156,7 +157,7 @@ def tank_shooting_handler(players_list: list()):
         tank_index = player[0]
         tank_shoot = player[5]
         time_since_last_shot = player[6]
-
+ 
         keys = pygame.key.get_pressed()
 
         if keys[tank_shoot]:
@@ -215,6 +216,9 @@ box_c_handler.pre_solve = collision_bullet_box
 
 print(ai.Ai.find_shortest_path(ai_list[2]))
 
+
+
+
 #-- Control whether the game run
 
 while running:
@@ -230,6 +234,8 @@ while running:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
+        #ai.Ai.move_cycle_gen(ai_list[2])
+
         tank_movement_handler(players_list)
 
         tank_shooting_handler(players_list)
