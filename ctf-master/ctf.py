@@ -49,6 +49,8 @@ game_objects_list   = []
 tanks_list          = []
 ai_list             = []
 
+
+
 #-- Resize the screen to the size of the current level
 screen = pygame.display.set_mode(current_map.rect().size)
 
@@ -114,6 +116,16 @@ for i in range(0, len(current_map.start_positions)):
     position = current_map.start_positions[i]
     base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
     game_objects_list.append(base)
+
+# player1 = {K_UP: tanks_list[0].accelerate(),\
+#            K_DOWN: tanks_list[0].decelerate(),\
+#            K_LEFT: tanks_list[0].turn_left(),\
+#            K_RIGHT: tanks_list[0].turn_right()}
+
+# player2 = {K_w: tanks_list[1].accelerate(),\
+#            K_s: tanks_list[1].decelerate(),\
+#            K_a: tanks_list[1].turn_left(),\
+#            K_d: tanks_list[1].turn_right()}
 
 
 def tank_movement_handler(players_list: list()):
