@@ -38,10 +38,11 @@ FRAMERATE = 50
 time_when_shot_t1 = 0
 time_when_shot_t2 = 0
 
-player1 = [0, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE, time_when_shot_t1]
-player2 = [1, K_w, K_s, K_a, K_d, K_q, time_when_shot_t2]
+#player1 = [0, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE, time_when_shot_t1]
+#player2 = [1, K_w, K_s, K_a, K_d, K_q, time_when_shot_t2]
 
-players_list = [player1, player2]
+#players_list = [player1, player2]
+
 #   Define the current level
 current_map         = maps.map0
 #   List of all game objects
@@ -117,67 +118,91 @@ for i in range(0, len(current_map.start_positions)):
     base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
     game_objects_list.append(base)
 
-# player1 = {K_UP: tanks_list[0].accelerate(),\
-#            K_DOWN: tanks_list[0].decelerate(),\
-#            K_LEFT: tanks_list[0].turn_left(),\
-#            K_RIGHT: tanks_list[0].turn_right()}
-
-# player2 = {K_w: tanks_list[1].accelerate(),\
-#            K_s: tanks_list[1].decelerate(),\
-#            K_a: tanks_list[1].turn_left(),\
-#            K_d: tanks_list[1].turn_right()}
 
 
-def tank_movement_handler(players_list: list()):
-    """Controls the movement for all the tanks"""
+
+# def tank_movement_handler(players_list: list()):
+#     """Controls the movement for all the tanks"""
     
-    for player in players_list:
-        tank_index = player[0]
-        forward = player[1]
-        reverse = player[2]
-        turn_left = player[3]
-        turn_right = player[4]
+#     for player in players_list:
+#         tank_index = player[0]
+#         forward = player[1]
+#         reverse = player[2]
+#         turn_left = player[3]
+#         turn_right = player[4]
 
-        keys = pygame.key.get_pressed()
-        # rest_player = player[1:-2]
-        # for i in rest_player:
-        #     if event.type == KEYDOWN and event.key == i:
+#         keys = pygame.key.get_pressed()
+#         # rest_player = player[1:-2]
+#         # for i in rest_player:
+#         #     if event.type == KEYDOWN and event.key == i:
 
-        if keys[forward]:
-            tanks_list[tank_index].accelerate()
+#         if keys[forward]:
+#             tanks_list[tank_index].accelerate()
 
-        if keys[reverse]:
-            tanks_list[tank_index].decelerate()
+#         if keys[reverse]:
+#             tanks_list[tank_index].decelerate()
 
-        if keys[turn_left]:
-            tanks_list[tank_index].turn_left()
+#         if keys[turn_left]:
+#             tanks_list[tank_index].turn_left()
 
-        if keys[turn_right]:
-            tanks_list[tank_index].turn_right()
+#         if keys[turn_right]:
+#             tanks_list[tank_index].turn_right()
         
-        """Stops the tank from moving when th keys are not pressed"""
-        if not keys[forward] and not keys[reverse]:
-            tanks_list[tank_index].stop_moving()
+#         """Stops the tank from moving when th keys are not pressed"""
+#         if not keys[forward] and not keys[reverse]:
+#             tanks_list[tank_index].stop_moving()
         
-        if not keys[turn_left] and not keys[turn_right]:
-            tanks_list[tank_index].stop_turning()
+#         if not keys[turn_left] and not keys[turn_right]:
+#             tanks_list[tank_index].stop_turning()
         
-        
-def tank_shooting_handler(players_list: list()):
-    """Controls shooting for all tanks"""
-    for player in players_list:
-        tank_index = player[0]
-        tank_shoot = player[5]
-        time_since_last_shot = player[6]
+def tank_movement_handler(player_list):
+    """Controls the movement and shooting for all tanks"""
+    for player in player_list:
+
+        if event.type == KEYDOWN:
+            if event.key == player["Forward"]:
+                tanks_list[player["Index"]].accelerate()
+
+            if event.key == player["Reverse"]:
+                tanks_list[player["Index"]].decelerate()
+
+            if event.key == player["Turn_left"]:
+                tanks_list[player["Index"]].turn_left()
+
+            if event.key == player["Turn_right"]:
+                tanks_list[player["Index"]].turn_right()
+
+            tank = tanks_list[player["Index"]]
+
+            if event.key == player["Shoot"] and \
+                (pygame.time.get_ticks() >= tank.shot_delay):
+                game_objects_list.append(tank.shoot(space))
+                tank.shot_delay = pygame.time.get_ticks() + 1000 
+
+        if event.type == KEYUP:
+            if event.key == player["Forward"] or event.key == player["Reverse"]:
+                tanks_list[player["Index"]].stop_moving()
+
+            if event.key == player["Turn_left"] or event.key == player["Turn_right"]:
+                tanks_list[player["Index"]].stop_turning()
+
+
+
+# def tank_shooting_handler(players_list: list()):
+#     """Controls shooting for all tanks"""
+#     for player in players_list:
+#         tank_index = player[0]
+#         tank_shoot = player[5]
+#         time_since_last_shot = player[6]
  
-        keys = pygame.key.get_pressed()
+#         keys = pygame.key.get_pressed()
 
-        if keys[tank_shoot]:
-            if (pygame.time.get_ticks() - time_since_last_shot) >= 1000:
-                    bullet = tanks_list[tank_index].shoot(space)
-                    game_objects_list.append(bullet)
-                    time_since_last_shot = pygame.time.get_ticks()
-                    player[6] = time_since_last_shot
+#         if keys[tank_shoot]:
+#             if (pygame.time.get_ticks() - time_since_last_shot) >= 1000:
+#                     bullet = tanks_list[tank_index].shoot(space)
+#                     game_objects_list.append(bullet)
+#                     time_since_last_shot = pygame.time.get_ticks()
+#                     player[6] = time_since_last_shot
 
 
 def collision_bullet_tank(arb, space, data):
@@ -234,6 +259,25 @@ print(ai.Ai.find_shortest_path(ai_list[2]))
 #-- Control whether the game run
 
 while running:
+
+    player1 = {"Index" : 0,\
+           "Forward" : pygame.K_UP,\
+           "Reverse": pygame.K_DOWN,\
+           "Turn_left": pygame.K_LEFT,\
+           "Turn_right": pygame.K_RIGHT,\
+           "Shoot": pygame.K_SPACE,\
+           "Time": 0}
+
+    player2 = {"Index": 1,\
+           "Forward": pygame.K_w,\
+           "Reverse": pygame.K_s,\
+           "Turn_left": pygame.K_a,\
+           "Turn_right": pygame.K_d,\
+           "Shoot": pygame.K_q,\
+           "Time": 0}
+    
+    player_list = [player1]
+
     #-- Handle the events
     for event in pygame.event.get():
         # Check if we receive a QUIT event (for instance, if the user press the
@@ -246,14 +290,14 @@ while running:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
-        #ai.Ai.move_cycle_gen(ai_list[2])
+        ai.Ai.decide(ai_list[2])
 
-        tank_movement_handler(players_list)
+        tank_movement_handler(player_list)
 
-        tank_shooting_handler(players_list)
-        
-        for tank_ai in ai_list:
-            ai.Ai.decide(tank_ai)
+        #tank_shooting_handler(player_list)
+
+        #for tank_ai in ai_list:
+        #    ai.Ai.decide(tank_ai)
         
     #-- Update physics
     if skip_update == 0:

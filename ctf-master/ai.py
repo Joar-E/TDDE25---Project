@@ -61,26 +61,30 @@ class Ai:
         """ A generator that iteratively goes through all the required steps
             to move to our goal.
         """ 
-        print("hej")
+        #print("hej")
         self.tank.body.angle = math.radians(self.tank.orientation)
         while True:
             path = self.find_shortest_path()
             if not path:
                 yield
                 continue
-            next_coord = path.popleft() 
-            print(self.grid_pos)
-            print(next_coord)
-            angle_b_v = angle_between_vectors(self.grid_pos, next_coord)
-            print(angle_b_v)
-            p_diff = periodic_difference_of_angles(self.tank.body.angle, angle_b_v)
+            next_coord = path.popleft() + (0.5, 0.5) #0.5 to get the center of the tile
+            #print(self.grid_pos)
+            #print(next_coord)
+            angle_to_next_coord = angle_between_vectors(self.grid_pos, next_coord)
+            #print(angle_to_next_coord)
+            p_diff = periodic_difference_of_angles(self.tank.body.angle, angle_to_next_coord)
+            #print(MIN_ANGLE_DIF)
             #print('hej2')
-            #print(self.tank.body.angle)
-            #print(p_diff)
-            while (self.tank.body.angle - p_diff) > MIN_ANGLE_DIF :
+            #print(self.tank.body.angle - p_diff)
+            while (self.tank.body.angle - p_diff) > MIN_ANGLE_DIF:    
                 self.tank.turn_left()
+                #print(self.tank.body.angle)
+                #print(p_diff)
                 #print('hej3')
                 yield
+                
+            self.tank.stop_turning()
             yield
 
         
@@ -88,7 +92,6 @@ class Ai:
         """ A simple Breadth First Search using integer coordinates as our nodes.
             Edges are calculated as we go, using an external function.
         """
-        # To be implemented
         source_node = self.grid_pos
         queue = deque()
         shortest_path = []
