@@ -192,6 +192,9 @@ class Tank(GamePhysicsObject):
         self.body.angular_velocity += self.rotation * self.ACCELERATION
         self.body.angular_velocity = clamp(self.max_speed, self.body.angular_velocity)
 
+        #
+        # print(self.body.angle% (2*math.pi))
+
 
     def post_update(self):
         # If the tank carries the flag, then update the positon of the flag

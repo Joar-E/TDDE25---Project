@@ -61,33 +61,54 @@ class Ai:
         """ A generator that iteratively goes through all the required steps
             to move to our goal.
         """ 
-        #print("hej")
-        self.tank.body.angle = math.radians(self.tank.orientation)
+        
+        
         while True:
+            #print("hej")
+            
             path = self.find_shortest_path()
             if not path:
                 yield
                 continue
+            path.popleft() # Removes the starting position from the path
+            tank_angle = self.tank.body.angle
             next_coord = path.popleft() + (0.5, 0.5) #0.5 to get the center of the tile
-            #print(self.grid_pos)
-            #print(next_coord)
-            angle_to_next_coord = angle_between_vectors(self.grid_pos, next_coord)
-            #print(angle_to_next_coord)
-            p_diff = periodic_difference_of_angles(self.tank.body.angle, angle_to_next_coord)
-            #print(MIN_ANGLE_DIF)
-            #print('hej2')
-            #print(self.tank.body.angle - p_diff)
-            while (self.tank.body.angle - p_diff) > MIN_ANGLE_DIF:    
-                self.tank.turn_left()
-                #print(self.tank.body.angle)
-                #print(p_diff)
-                #print('hej3')
-                yield
-                
-            self.tank.stop_turning()
-            yield
 
+            angle_to_next_coord = angle_between_vectors(self.tank.body.position, next_coord)
+
+            p_diff = periodic_difference_of_angles(tank_angle, angle_to_next_coord)
+            self.tank.stop_moving()
+            yield
+            while (tank_angle - p_diff) > MIN_ANGLE_DIF:    
+                self.tank.turn_left()
+                #print(tank_angle)
+                #print(p_diff)
+                
+                yield
+                tank_angle = self.tank.body.angle
+            self.tank.stop_turning()
+
+            distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
+            current_distance = 100
+            while (current_distance - distance_to_next_coord) > 0:
+                self.tank.accelerate()
+
+                current_distance = self.tank.body.position.get_distance(next_coord)
+                yield
+                distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
+                yield
+            print(tank_angle - p_diff)
+            #print("hej2")
+            #print(self.tank.body.position)
+            self.tank.stop_moving()
+            self.update_grid_pos()
+            #print(self.tank.body.position)
+            yield
+            continue
         
+            #move_cycle = move_cycle_gen()           
+            
+ 
     def find_shortest_path(self):
         """ A simple Breadth First Search using integer coordinates as our nodes.
             Edges are calculated as we go, using an external function.

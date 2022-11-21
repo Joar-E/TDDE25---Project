@@ -278,6 +278,8 @@ while running:
     
     player_list = [player1]
 
+    ai.Ai.decide(ai_list[2])
+    
     #-- Handle the events
     for event in pygame.event.get():
         # Check if we receive a QUIT event (for instance, if the user press the
@@ -290,7 +292,7 @@ while running:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
-        ai.Ai.decide(ai_list[2])
+    
 
         tank_movement_handler(player_list)
 
