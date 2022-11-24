@@ -56,6 +56,26 @@ class Ai:
         """
         pass # To be implemented
 
+    def should_turn_right(self, angle_to_next_coord, tank_angle):
+        if tank_angle >= angle_to_next_coord:
+            return tank_angle - math.pi > angle_to_next_coord #tank_angle#math.pi - angle_to_next_coord > math.pi
+
+        elif tank_angle < angle_to_next_coord:
+            return tank_angle + math.pi > angle_to_next_coord #tank_angle#math.pi + angle_to_next_coord < math.pi
+        
+
+    def angle_2_pi_converter(self, angle):
+        if angle >= 0:
+             
+            return angle % (2*math.pi)
+        else:
+            return (2*math.pi + angle) % (2*math.pi)
+    
+    def diff_between_angles(self, angle1, angle2):
+        difference = angle1 - angle2
+        if difference > math.pi:
+            difference = math.pi - difference
+        return difference
     
     def move_cycle_gen (self):
         """ A generator that iteratively goes through all the required steps
@@ -65,27 +85,40 @@ class Ai:
         
         while True:
             #print("hej")
-            
+            print(self.get_target_tile())
             path = self.find_shortest_path()
-            if not path:
+            if len(path) < 2:
+                #path = self.find_shortest_path()
                 yield
                 continue
+            
+            
             path.popleft() # Removes the starting position from the path
-            tank_angle = self.tank.body.angle
             next_coord = path.popleft() + (0.5, 0.5) #0.5 to get the center of the tile
-
+            
+            tank_angle = self.angle_2_pi_converter(self.tank.body.angle)
             angle_to_next_coord = angle_between_vectors(self.tank.body.position, next_coord)
+            angle_to_next_coord = self.angle_2_pi_converter(angle_to_next_coord)
+            print(angle_to_next_coord)
+            print(tank_angle)
+            #p_diff = periodic_difference_of_angles(tank_angle, angle_to_next_coord)
 
-            p_diff = periodic_difference_of_angles(tank_angle, angle_to_next_coord)
-            self.tank.stop_moving()
+            
+            
             yield
-            while (tank_angle - p_diff) > MIN_ANGLE_DIF:    
-                self.tank.turn_left()
+            while abs(self.angle_2_pi_converter(self.diff_between_angles(tank_angle, angle_to_next_coord))) > MIN_ANGLE_DIF:
+                self.tank.stop_moving()
+                if self.should_turn_right(angle_to_next_coord, tank_angle):
+                    self.tank.turn_right()
+                else:    
+                    self.tank.turn_left()
                 #print(tank_angle)
                 #print(p_diff)
-                
+                # print(tank_angle)
+                # print(angle_to_next_coord)
+                # print(abs(self.diff_between_angles(tank_angle, angle_to_next_coord)))
                 yield
-                tank_angle = self.tank.body.angle
+                tank_angle = self.angle_2_pi_converter(self.tank.body.angle)
             self.tank.stop_turning()
 
             distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
@@ -97,10 +130,10 @@ class Ai:
                 yield
                 distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
                 yield
-            print(tank_angle - p_diff)
+            
             #print("hej2")
             #print(self.tank.body.position)
-            self.tank.stop_moving()
+            #self.tank.stop_moving()
             self.update_grid_pos()
             #print(self.tank.body.position)
             yield
@@ -149,6 +182,7 @@ class Ai:
             return the position of our home base.
         """
         if self.tank.flag != None:
+            
             x, y = self.tank.start_position
         else:
             self.get_flag() # Ensure that we have initialized it.

@@ -99,7 +99,7 @@ for i in range(0, len(current_map.start_positions)):
     # Get the starting position of the tank "i"
     pos = current_map.start_positions[i]
     # Create the tank, images.tanks contains the image representing the tank
-    tank = gameobjects.Tank(pos[0], pos[1], 0, images.tanks[i], space)#pos[2]
+    tank = gameobjects.Tank(pos[0], pos[1], pos[2], images.tanks[i], space)
     # Add the tank to the list of tanks
     tanks_list.append(tank)
     game_objects_list.append(tank)
@@ -251,7 +251,7 @@ box_c_handler.pre_solve = collision_bullet_box
 
 #----- Main Loop -----#
 
-print(ai.Ai.find_shortest_path(ai_list[2]))
+#print(ai.Ai.find_shortest_path(ai_list[2]))
 
 
 
@@ -277,17 +277,19 @@ while running:
            "Time": 0}
     
     player_list = [player1]
+    for tank_ai in ai_list:
 
-    ai.Ai.decide(ai_list[2])
-    
+        ai.Ai.decide(tank_ai)
+        
+    for tanks in tanks_list:
+            gameobjects.Tank.try_grab_flag(tanks, flag)
+            if tanks.has_won():
+                running = False
     #-- Handle the events
     for event in pygame.event.get():
         # Check if we receive a QUIT event (for instance, if the user press the
         # close button of the wiendow) or if the user press the escape key.
-        for tanks in tanks_list:
-            gameobjects.Tank.try_grab_flag(tanks, flag)
-            if tanks.has_won():
-                running = False
+        
         
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
