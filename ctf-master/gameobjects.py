@@ -193,7 +193,11 @@ class Tank(GamePhysicsObject):
         self.body.angular_velocity = clamp(self.max_speed, self.body.angular_velocity)
 
         #
-        # print(self.body.angle% (2*math.pi))
+        start_coord = (self.body.position[0] - math.sin(self.body.angle)*0.4, self.body.position[1] + math.cos(self.body.angle)*0.4)
+        end_coord = (self.body.position[0] - math.sin(self.body.angle)*10, self.body.position[1] + math.cos(self.body.angle)*10)
+        print(self.body.position)
+        print(start_coord)
+        print(end_coord)
 
 
     def post_update(self):

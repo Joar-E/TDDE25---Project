@@ -54,14 +54,16 @@ class Ai:
         """ Makes a raycast query in front of the tank. If another tank
             or a wooden box is found, then we shoot. 
         """
-        pass # To be implemented
+        start_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*0.4, self.tank.body.position[1] + math.cos(self.tank.body.angle)*0.4)
+        end_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*10, self.tank.body.position[1] + math.cos(self.tank.body.angle)*10)
+        
 
     def should_turn_right(self, angle_to_next_coord, tank_angle):
         if tank_angle >= angle_to_next_coord:
-            return tank_angle - math.pi > angle_to_next_coord #tank_angle#math.pi - angle_to_next_coord > math.pi
+            return tank_angle - math.pi > angle_to_next_coord 
 
         elif tank_angle < angle_to_next_coord:
-            return tank_angle + math.pi > angle_to_next_coord #tank_angle#math.pi + angle_to_next_coord < math.pi
+            return tank_angle + math.pi > angle_to_next_coord 
         
 
     def angle_2_pi_converter(self, angle):
@@ -84,8 +86,7 @@ class Ai:
         
         
         while True:
-            #print("hej")
-            print(self.get_target_tile())
+
             path = self.find_shortest_path()
             if len(path) < 2:
                 #path = self.find_shortest_path()
@@ -99,30 +100,26 @@ class Ai:
             tank_angle = self.angle_2_pi_converter(self.tank.body.angle)
             angle_to_next_coord = angle_between_vectors(self.tank.body.position, next_coord)
             angle_to_next_coord = self.angle_2_pi_converter(angle_to_next_coord)
-            print(angle_to_next_coord)
-            print(tank_angle)
-            #p_diff = periodic_difference_of_angles(tank_angle, angle_to_next_coord)
 
-            
+            #p_diff = periodic_difference_of_angles(tank_angle, angle_to_next_coord)
             
             yield
+
             while abs(self.angle_2_pi_converter(self.diff_between_angles(tank_angle, angle_to_next_coord))) > MIN_ANGLE_DIF:
                 self.tank.stop_moving()
                 if self.should_turn_right(angle_to_next_coord, tank_angle):
                     self.tank.turn_right()
                 else:    
                     self.tank.turn_left()
-                #print(tank_angle)
-                #print(p_diff)
-                # print(tank_angle)
-                # print(angle_to_next_coord)
-                # print(abs(self.diff_between_angles(tank_angle, angle_to_next_coord)))
+
                 yield
                 tank_angle = self.angle_2_pi_converter(self.tank.body.angle)
+
             self.tank.stop_turning()
 
             distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
             current_distance = 100
+
             while (current_distance - distance_to_next_coord) > 0:
                 self.tank.accelerate()
 
@@ -131,11 +128,9 @@ class Ai:
                 distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
                 yield
             
-            #print("hej2")
-            #print(self.tank.body.position)
             #self.tank.stop_moving()
             self.update_grid_pos()
-            #print(self.tank.body.position)
+
             yield
             continue
         
@@ -150,11 +145,9 @@ class Ai:
         queue = deque()
         shortest_path = []
         visited_node = set()
-        #target_tile = self.get_target_tile()
         queue.append((source_node, []))
         
         while queue:
-            #print(queue)
             target, path = queue.popleft()
             
             if target == self.get_target_tile():
@@ -165,15 +158,12 @@ class Ai:
             
             neighboring_tiles = self.get_tile_neighbors(target)
             for tiles in neighboring_tiles:
-                #print(tiles.int_tuple in visited_node)
                 if tiles.int_tuple not in visited_node:
-                    
+                    print(type(target))
                     queue.append((tiles, path + [target])) #path is actually a list but does not yet know it's a list
                                                            #so we can not append target. But we can make target into a list
                                                            # and then combine the two lists 
-                    #print(path)
                     visited_node.add(tiles.int_tuple)
-                    #print(visited_node)
                     
         return deque(shortest_path)
             
