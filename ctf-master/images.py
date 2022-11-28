@@ -12,6 +12,19 @@ def load_image(file):
         raise SystemExit('Could not load image "%s" %s'%(file, pygame.get_error()))
     return surface.convert_alpha()
 
+# def load_animation(file,rows, columns):
+#     print("NEW ANIMATION")
+#     image = load_image(file)
+#     output=[]
+#     dx=(image.get_width()/columns
+#     dy=(image.get_height()/rows
+    
+#     for row_index in range(rows):
+#         for column_index in range(columns):   
+#             pos=(dx*column_index, dy*row_index)
+#             output.append(image.subsurface(pos, (dx,dy) ) )
+
+#     return output
 
 TILE_SIZE = 40 # Define the default size of tiles
  
