@@ -193,11 +193,11 @@ class Tank(GamePhysicsObject):
         self.body.angular_velocity = clamp(self.max_speed, self.body.angular_velocity)
 
         #
-        start_coord = (self.body.position[0] - math.sin(self.body.angle)*0.4, self.body.position[1] + math.cos(self.body.angle)*0.4)
-        end_coord = (self.body.position[0] - math.sin(self.body.angle)*10, self.body.position[1] + math.cos(self.body.angle)*10)
-        print(self.body.position)
-        print(start_coord)
-        print(end_coord)
+        # start_coord = (self.body.position[0] - math.sin(self.body.angle)*0.4, self.body.position[1] + math.cos(self.body.angle)*0.4)
+        # end_coord = (self.body.position[0] - math.sin(self.body.angle)*10, self.body.position[1] + math.cos(self.body.angle)*10)
+        # print(self.body.position)
+        # print(start_coord)
+        # print(end_coord)
 
 
     def post_update(self):
@@ -263,6 +263,7 @@ class Box(GamePhysicsObject):
         """ It takes as arguments the coordinate of the starting position of the box (x,y) and the box model (boxmodel). """
         super().__init__(x, y, 0, sprite, space, movable, collision_type)
         self.destructable = destructable
+        self.collision_type = collision_type
         
 
 def get_box_with_type(x, y, type, space):

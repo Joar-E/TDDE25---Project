@@ -16,8 +16,8 @@ def load_image(file):
 #     print("NEW ANIMATION")
 #     image = load_image(file)
 #     output=[]
-#     dx=(image.get_width()/columns
-#     dy=(image.get_height()/rows
+#     dx=(image.get_width()/columns)
+#     dy=(image.get_height()/rows)
     
 #     for row_index in range(rows):
 #         for column_index in range(columns):   
@@ -29,6 +29,8 @@ def load_image(file):
 TILE_SIZE = 40 # Define the default size of tiles
  
 explosion = load_image('explosion.png') # Image of an explosion
+
+#explosion_animation = load_animation('explosion_animation.png', 6, 8)
  
 grass     = load_image('grass.png') # Image of a grass tile
 

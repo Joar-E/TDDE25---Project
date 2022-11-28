@@ -1,9 +1,9 @@
 import math
 import pymunk
+import pygame
 from pymunk import Vec2d
 import gameobjects
 from collections import defaultdict, deque
-import maps
 
 # NOTE: use only 'map0' during development!
 
@@ -48,6 +48,7 @@ class Ai:
     
     def decide(self):
         """ Main decision function that gets called on every tick of the game. """
+        self.maybe_shoot()
         next(self.move_cycle)
 
     def maybe_shoot(self):
@@ -56,7 +57,21 @@ class Ai:
         """
         start_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*0.4, self.tank.body.position[1] + math.cos(self.tank.body.angle)*0.4)
         end_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*10, self.tank.body.position[1] + math.cos(self.tank.body.angle)*10)
-        
+        res = self.space.segment_query_first(start_coord, end_coord, 0, pymunk.ShapeFilter())
+        if hasattr(res, 'shape'):
+            if hasattr(res.shape, 'parent'):
+                if isinstance(res.shape.parent, gameobjects.Box):
+                    if getattr(res.shape.parent, "collision_type") == 3:
+                        if pygame.time.get_ticks() >= self.tank.shot_delay:
+                            self.game_objects_list.append(self.tank.shoot(self.space))
+                            self.tank.shot_delay = pygame.time.get_ticks() + 1000
+
+                elif isinstance(res.shape.parent, gameobjects.Tank):
+                    if pygame.time.get_ticks() >= self.tank.shot_delay:
+                        self.game_objects_list.append(self.tank.shoot(self.space))
+                        self.tank.shot_delay = pygame.time.get_ticks() + 1000
+            else:
+                pass
 
     def should_turn_right(self, angle_to_next_coord, tank_angle):
         if tank_angle >= angle_to_next_coord:
@@ -159,7 +174,6 @@ class Ai:
             neighboring_tiles = self.get_tile_neighbors(target)
             for tiles in neighboring_tiles:
                 if tiles.int_tuple not in visited_node:
-                    print(type(target))
                     queue.append((tiles, path + [target])) #path is actually a list but does not yet know it's a list
                                                            #so we can not append target. But we can make target into a list
                                                            # and then combine the two lists 
