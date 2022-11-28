@@ -262,6 +262,8 @@ class Box(GamePhysicsObject):
     def __init__(self, x, y, sprite, movable, space, destructable, collision_type):
         """ It takes as arguments the coordinate of the starting position of the box (x,y) and the box model (boxmodel). """
         super().__init__(x, y, 0, sprite, space, movable, collision_type)
+        self.x = x
+        self.y = y
         self.destructable = destructable
         self.collision_type = collision_type
         

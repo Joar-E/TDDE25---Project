@@ -55,6 +55,7 @@ class Ai:
         """ Makes a raycast query in front of the tank. If another tank
             or a wooden box is found, then we shoot. 
         """
+
         start_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*0.4, self.tank.body.position[1] + math.cos(self.tank.body.angle)*0.4)
         end_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*10, self.tank.body.position[1] + math.cos(self.tank.body.angle)*10)
         res = self.space.segment_query_first(start_coord, end_coord, 0, pymunk.ShapeFilter())
@@ -62,6 +63,7 @@ class Ai:
             if hasattr(res.shape, 'parent'):
                 if isinstance(res.shape.parent, gameobjects.Box):
                     if getattr(res.shape.parent, "collision_type") == 3:
+                        # box = Vec2d(getattr(res.shape.parent, 'x'), getattr(res.shape.parent, 'y'))
                         if pygame.time.get_ticks() >= self.tank.shot_delay:
                             self.game_objects_list.append(self.tank.shoot(self.space))
                             self.tank.shot_delay = pygame.time.get_ticks() + 1000
@@ -226,7 +228,8 @@ class Ai:
         if coord[0] <= self.MAX_X and coord[0] >= 0\
              and coord[1] <= self.MAX_Y and coord[1] >= 0:
 
-            if self.currentmap.boxAt(coord[0], coord[1]) == 0:
+            if self.currentmap.boxAt(coord[0], coord[1]) == 0 or \
+               self.currentmap.boxAt(coord[0], coord[1]) == 2:
                 return True
             return False
 
