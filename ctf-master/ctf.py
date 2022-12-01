@@ -275,14 +275,10 @@ while running:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
-    
-
         tank_movement_handler(player_list)
 
-        #tank_shooting_handler(player_list)
-
-        #for tank_ai in ai_list:
-        #    ai.Ai.decide(tank_ai)
+        for tank_ai in ai_list:
+           ai.Ai.decide(tank_ai)
         
     #-- Update physics
     if skip_update == 0:
