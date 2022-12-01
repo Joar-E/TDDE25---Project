@@ -1,3 +1,8 @@
+import os
+def dynamicwinpos(x=1000, y=500):
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+
+
 import pygame
 from pygame.locals import *
 from pygame.color import *
@@ -8,6 +13,8 @@ import math
 
 #-- Initialise the display
 pygame.init()
+
+dynamicwinpos()
 pygame.display.set_mode()
 
 #-- Initialise the clock
@@ -35,13 +42,7 @@ FRAMERATE = 50
 #COOLDOWN_FOR_BULLET = 0
 
 #-- Variables
-time_when_shot_t1 = 0
-time_when_shot_t2 = 0
 
-#player1 = [0, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_SPACE, time_when_shot_t1]
-#player2 = [1, K_w, K_s, K_a, K_d, K_q, time_when_shot_t2]
-
-#players_list = [player1, player2]
 
 #   Define the current level
 current_map         = maps.map0
@@ -188,23 +189,6 @@ def tank_movement_handler(player_list):
 
 
 
-# def tank_shooting_handler(players_list: list()):
-#     """Controls shooting for all tanks"""
-#     for player in players_list:
-#         tank_index = player[0]
-#         tank_shoot = player[5]
-#         time_since_last_shot = player[6]
- 
-#         keys = pygame.key.get_pressed()
-
-#         if keys[tank_shoot]:
-#             if (pygame.time.get_ticks() - time_since_last_shot) >= 1000:
-#                     bullet = tanks_list[tank_index].shoot(space)
-#                     game_objects_list.append(bullet)
-#                     time_since_last_shot = pygame.time.get_ticks()
-#                     player[6] = time_since_last_shot
-
-
 def play_explosion_anim(bullet):
     game_objects_list.append(bullet.explosion(space))
 
@@ -212,6 +196,20 @@ def play_explosion_anim(bullet):
         if isinstance(obj, gameobjects.Explosion):
             if obj.stop:
                 game_objects_list.remove(obj)
+
+
+def collision_bullet_bullet(arb, space, data):
+    """Handles collisions between tanks and bullets"""
+    bullet1 = arb.shapes[0]
+    bullet2 = arb.shapes[1]
+
+    space.remove(bullet1, bullet1.body)
+    game_objects_list.remove(bullet1.parent)
+
+    space.remove(bullet2, bullet2.body)
+    game_objects_list.remove(bullet2.parent)
+    play_explosion_anim(bullet1.parent)
+    return False
 
 
 def collision_bullet_tank(arb, space, data):
@@ -251,6 +249,9 @@ def ind_collision_bullet_box(arb, space, data):
     return False
 
 
+bullet_bullet_c_handler = space.add_collision_handler(1, 1)
+bullet_bullet_c_handler.pre_solve = collision_bullet_bullet
+
 indestructible_c_handler = space.add_collision_handler(1, 0)
 indestructible_c_handler.pre_solve = ind_collision_bullet_box
 
@@ -287,10 +288,10 @@ while running:
            "Shoot": pygame.K_q,\
            "Time": 0}
     
-    player_list = [player1]
-    for tank_ai in ai_list:
+    player_list = [player1, player2]
+    # for tank_ai in ai_list:
 
-        ai.Ai.decide(tank_ai)
+    #     ai.Ai.decide(tank_ai)
         
     for tanks in tanks_list:
             gameobjects.Tank.try_grab_flag(tanks, flag)

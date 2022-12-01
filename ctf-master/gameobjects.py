@@ -192,12 +192,6 @@ class Tank(GamePhysicsObject):
         self.body.angular_velocity += self.rotation * self.ACCELERATION
         self.body.angular_velocity = clamp(self.max_speed, self.body.angular_velocity)
 
-        #
-        start_coord = (self.body.position[0] - math.sin(self.body.angle)*0.4, self.body.position[1] + math.cos(self.body.angle)*0.4)
-        end_coord = (self.body.position[0] - math.sin(self.body.angle)*10, self.body.position[1] + math.cos(self.body.angle)*10)
-        # print(self.body.position)
-        # print(start_coord)
-        # print(end_coord)
 
 
     def post_update(self):
@@ -232,6 +226,7 @@ class Tank(GamePhysicsObject):
     
     def shoot(self, space):
         """ Call this function to shoot a missile"""
+        
         return Bullet(self.body.position[0], self.body.position[1], self.body.angle, images.bullet, space, self)
 
     def respawn(self):
@@ -241,6 +236,8 @@ class Tank(GamePhysicsObject):
     
     def drop_flag(self, flag):
         flag.is_on_tank = False
+    
+    
         
 
 class Bullet(GamePhysicsObject):
