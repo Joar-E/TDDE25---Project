@@ -117,8 +117,6 @@ class Ai:
             tank_angle = self.angle_2_pi_converter(self.tank.body.angle)
             angle_to_next_coord = angle_between_vectors(self.tank.body.position, next_coord)
             angle_to_next_coord = self.angle_2_pi_converter(angle_to_next_coord)
-
-            #p_diff = periodic_difference_of_angles(tank_angle, angle_to_next_coord)
             
             yield
 
@@ -150,7 +148,6 @@ class Ai:
 
             yield
             continue
-        
             #move_cycle = move_cycle_gen()           
             
  
