@@ -14,3 +14,4 @@ __pycache__
 *.e4p
 ctf.tar.bz2
 *kdev*
+ctf-env/
