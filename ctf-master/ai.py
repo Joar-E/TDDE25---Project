@@ -159,7 +159,7 @@ class Ai:
             neighboring_tiles = self.get_tile_neighbors(target)
             for tiles in neighboring_tiles:
                 if tiles.int_tuple not in visited_node:
-                    print(type(target))
+                    #print(type(target))
                     queue.append((tiles, path + [target])) #path is actually a list but does not yet know it's a list
                                                            #so we can not append target. But we can make target into a list
                                                            # and then combine the two lists 

@@ -12,23 +12,25 @@ def load_image(file):
         raise SystemExit('Could not load image "%s" %s'%(file, pygame.get_error()))
     return surface.convert_alpha()
 
-# def load_animation(file,rows, columns):
-#     print("NEW ANIMATION")
-#     image = load_image(file)
-#     output=[]
-#     dx=(image.get_width()/columns
-#     dy=(image.get_height()/rows
+def load_animation(file,rows, columns, x, y):
+    image = load_image(file)
+    image = pygame.transform.scale(image, (x, y))
+    output=[]
+    dx=(image.get_width()/columns)
+    dy=(image.get_height()/rows)
     
-#     for row_index in range(rows):
-#         for column_index in range(columns):   
-#             pos=(dx*column_index, dy*row_index)
-#             output.append(image.subsurface(pos, (dx,dy) ) )
+    for row_index in range(rows):
+        for column_index in range(columns):   
+            pos=(dx*column_index, dy*row_index)
+            output.append(image.subsurface(pos, (dx,dy) ) )
 
-#     return output
+    return output
 
 TILE_SIZE = 40 # Define the default size of tiles
  
 explosion = load_image('explosion.png') # Image of an explosion
+
+explosion_animation = load_animation('explosion_animation.png', 6, 8, 650, 500)
  
 grass     = load_image('grass.png') # Image of a grass tile
 

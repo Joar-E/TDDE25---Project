@@ -205,6 +205,15 @@ def tank_movement_handler(player_list):
 #                     player[6] = time_since_last_shot
 
 
+def play_explosion_anim(bullet):
+    game_objects_list.append(bullet.explosion(space))
+
+    for obj in game_objects_list:
+        if isinstance(obj, gameobjects.Explosion):
+            if obj.stop:
+                game_objects_list.remove(obj)
+
+
 def collision_bullet_tank(arb, space, data):
     """Handles collisions between tanks and bullets"""
     bullet_shape = arb.shapes[0]
@@ -215,6 +224,7 @@ def collision_bullet_tank(arb, space, data):
         game_objects_list.remove(bullet_shape.parent)
         gameobjects.Tank.respawn(tank)
         gameobjects.Tank.drop_flag(tank, flag)
+        play_explosion_anim(bullet_shape.parent)
 
     return False
 
@@ -223,12 +233,12 @@ def collision_bullet_box(arb, space, data):
     """Handles collisions between bullets and boxes"""
     bullet_shape = arb.shapes[0]
     box = arb.shapes[1]
-
     space.remove(bullet_shape, bullet_shape.body)
     game_objects_list.remove(bullet_shape.parent)
 
     space.remove(box, box.body)
     game_objects_list.remove(box.parent)
+    play_explosion_anim(bullet_shape.parent)
     return False
 
 
@@ -237,6 +247,7 @@ def ind_collision_bullet_box(arb, space, data):
     bullet_shape = arb.shapes[0]
     space.remove(bullet_shape, bullet_shape.body)
     game_objects_list.remove(bullet_shape.parent)
+    play_explosion_anim(bullet_shape.parent)
     return False
 
 

@@ -195,9 +195,9 @@ class Tank(GamePhysicsObject):
         #
         start_coord = (self.body.position[0] - math.sin(self.body.angle)*0.4, self.body.position[1] + math.cos(self.body.angle)*0.4)
         end_coord = (self.body.position[0] - math.sin(self.body.angle)*10, self.body.position[1] + math.cos(self.body.angle)*10)
-        print(self.body.position)
-        print(start_coord)
-        print(end_coord)
+        # print(self.body.position)
+        # print(start_coord)
+        # print(end_coord)
 
 
     def post_update(self):
@@ -250,8 +250,14 @@ class Bullet(GamePhysicsObject):
         self.tank = tank
         self.orientation = math.degrees(self.body.angle)
         self.velocity = 7.0
+
     def update(self):
         self.body.velocity = pymunk.Vec2d((0, self.velocity)).rotated(self.orientation)
+    
+    def explosion(self, space):
+        explosion = Explosion(self.body.position[0], self.body.position[1])
+
+        return explosion
         
         
 
@@ -299,3 +305,24 @@ class Flag(GameVisibleObject):
     def __init__(self, x, y):
         self.is_on_tank   = False
         super().__init__(x, y,  images.flag)
+
+
+class Explosion(GameVisibleObject):
+    """ This class extends GameVisibleObject for representing flags."""
+
+    def __init__(self, x, y):
+        super().__init__(x, y,  images.explosion_animation[0])
+        self.timer = 0
+        self.stop = False
+        
+
+    def post_update(self):
+        if self.timer >= len(images.explosion_animation)-1:
+            self.stop = True
+        else:
+            self.timer += 1
+        
+        images_index = self.timer
+        self.sprite = images.explosion_animation[images_index]
+
+        return images_index
