@@ -257,10 +257,11 @@ while running:
            "Shoot": pygame.K_q,\
            "Time": 0}
     
-    player_list = [player1, player2]
-    # for tank_ai in ai_list:
+    player_list = [player1]
+    
+    for tank_ai in ai_list:
 
-    #     ai.Ai.decide(tank_ai)
+        ai.Ai.decide(tank_ai)
         
     for tanks in tanks_list:
             gameobjects.Tank.try_grab_flag(tanks, flag)
@@ -277,8 +278,6 @@ while running:
         
         tank_movement_handler(player_list)
 
-        for tank_ai in ai_list:
-           ai.Ai.decide(tank_ai)
         
     #-- Update physics
     if skip_update == 0:
