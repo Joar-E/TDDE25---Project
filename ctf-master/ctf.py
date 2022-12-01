@@ -1,7 +1,4 @@
 import os
-def dynamicwinpos(x=1000, y=500):
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
-
 
 import pygame
 from pygame.locals import *
@@ -13,6 +10,14 @@ import math
 
 #-- Initialise the display
 pygame.init()
+
+#width, height = pygame.display.get_surface().get_size()
+pos_x = int(pygame.display.get_desktop_sizes()[0][0]/2 - 200)#- (width/2))
+pos_y = int(pygame.display.get_desktop_sizes()[0][1]/2 - 200)#- (height/2))
+def dynamicwinpos(x = pos_x, y = pos_y):
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+
+
 
 dynamicwinpos()
 pygame.display.set_mode()
@@ -119,42 +124,6 @@ for i in range(0, len(current_map.start_positions)):
     base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
     game_objects_list.append(base)
 
-
-
-
-# def tank_movement_handler(players_list: list()):
-#     """Controls the movement for all the tanks"""
-    
-#     for player in players_list:
-#         tank_index = player[0]
-#         forward = player[1]
-#         reverse = player[2]
-#         turn_left = player[3]
-#         turn_right = player[4]
-
-#         keys = pygame.key.get_pressed()
-#         # rest_player = player[1:-2]
-#         # for i in rest_player:
-#         #     if event.type == KEYDOWN and event.key == i:
-
-#         if keys[forward]:
-#             tanks_list[tank_index].accelerate()
-
-#         if keys[reverse]:
-#             tanks_list[tank_index].decelerate()
-
-#         if keys[turn_left]:
-#             tanks_list[tank_index].turn_left()
-
-#         if keys[turn_right]:
-#             tanks_list[tank_index].turn_right()
-        
-#         """Stops the tank from moving when th keys are not pressed"""
-#         if not keys[forward] and not keys[reverse]:
-#             tanks_list[tank_index].stop_moving()
-        
-#         if not keys[turn_left] and not keys[turn_right]:
-#             tanks_list[tank_index].stop_turning()
         
 def tank_movement_handler(player_list):
     """Controls the movement and shooting for all tanks"""
