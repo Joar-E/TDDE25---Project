@@ -1,9 +1,9 @@
 import math
 import pymunk
+import pygame
 from pymunk import Vec2d
 import gameobjects
 from collections import defaultdict, deque
-import maps
 
 # NOTE: use only 'map0' during development!
 
@@ -48,15 +48,32 @@ class Ai:
     
     def decide(self):
         """ Main decision function that gets called on every tick of the game. """
+        self.maybe_shoot()
         next(self.move_cycle)
 
     def maybe_shoot(self):
         """ Makes a raycast query in front of the tank. If another tank
             or a wooden box is found, then we shoot. 
         """
+
         start_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*0.4, self.tank.body.position[1] + math.cos(self.tank.body.angle)*0.4)
         end_coord = (self.tank.body.position[0] - math.sin(self.tank.body.angle)*10, self.tank.body.position[1] + math.cos(self.tank.body.angle)*10)
-        
+        res = self.space.segment_query_first(start_coord, end_coord, 0, pymunk.ShapeFilter())
+        if hasattr(res, 'shape'):
+            if hasattr(res.shape, 'parent'):
+                if isinstance(res.shape.parent, gameobjects.Box):
+                    if getattr(res.shape.parent, "collision_type") == 3:
+                        # box = Vec2d(getattr(res.shape.parent, 'x'), getattr(res.shape.parent, 'y'))
+                        if pygame.time.get_ticks() >= self.tank.shot_delay:
+                            self.game_objects_list.append(self.tank.shoot(self.space))
+                            self.tank.shot_delay = pygame.time.get_ticks() + 1000
+
+                elif isinstance(res.shape.parent, gameobjects.Tank):
+                    if pygame.time.get_ticks() >= self.tank.shot_delay:
+                        self.game_objects_list.append(self.tank.shoot(self.space))
+                        self.tank.shot_delay = pygame.time.get_ticks() + 1000
+            else:
+                pass
 
     def should_turn_right(self, angle_to_next_coord, tank_angle):
         if tank_angle >= angle_to_next_coord:
@@ -100,8 +117,6 @@ class Ai:
             tank_angle = self.angle_2_pi_converter(self.tank.body.angle)
             angle_to_next_coord = angle_between_vectors(self.tank.body.position, next_coord)
             angle_to_next_coord = self.angle_2_pi_converter(angle_to_next_coord)
-
-            #p_diff = periodic_difference_of_angles(tank_angle, angle_to_next_coord)
             
             yield
 
@@ -133,7 +148,6 @@ class Ai:
 
             yield
             continue
-        
             #move_cycle = move_cycle_gen()           
             
  
@@ -212,7 +226,8 @@ class Ai:
         if coord[0] <= self.MAX_X and coord[0] >= 0\
              and coord[1] <= self.MAX_Y and coord[1] >= 0:
 
-            if self.currentmap.boxAt(coord[0], coord[1]) == 0:
+            if self.currentmap.boxAt(coord[0], coord[1]) == 0 or \
+               self.currentmap.boxAt(coord[0], coord[1]) == 2:
                 return True
             return False
 
