@@ -1,5 +1,5 @@
 import os
-
+import sys
 import pygame
 from pygame.locals import *
 from pygame.color import *
@@ -37,7 +37,6 @@ import images
 import gameobjects
 import maps
 
-running = True
 
 skip_update = 0
 
@@ -60,7 +59,29 @@ ai_list             = []
 
 #-- Resize the screen to the size of the current level
 screen = pygame.display.set_mode(current_map.rect().size)
+width = screen.get_width()
+height = screen.get_height()
+smallfont = pygame.font.SysFont('Times New Roman',42)
+text = smallfont.render('Start game' , True , (255, 255, 255))
 
+pygame.display.set_caption("Start Menu")
+
+#Creates a start menu
+start_menu = True
+while start_menu:
+    
+    screen.fill((255, 255, 255))
+    pygame.draw.rect(screen, (10,10,10),[width/4,height/4,width/2,height/7])
+    screen.blit(text , (width/4,height/4))
+    pygame.display.update()
+    for event in pygame.event.get():
+
+        if event.type == QUIT:
+            pygame.quit()
+        if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
+            start_menu = False
+            pygame.display.set_caption("Capture The Flag")
+            running = True
 
 #-- Generate the background
 background = pygame.Surface(screen.get_size())
@@ -272,7 +293,6 @@ while running:
         # Check if we receive a QUIT event (for instance, if the user press the
         # close button of the wiendow) or if the user press the escape key.
         
-        
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             running = False
         
@@ -321,3 +341,4 @@ while running:
 
     #   Control the game framerate
     clock.tick(FRAMERATE)
+
