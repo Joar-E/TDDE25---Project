@@ -44,7 +44,7 @@ time_when_shot_t2 = 0
 #players_list = [player1, player2]
 
 #   Define the current level
-current_map         = maps.map1
+current_map         = maps.map0
 #   List of all game objects
 game_objects_list   = []
 tanks_list          = []
