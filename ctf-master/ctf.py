@@ -61,9 +61,11 @@ ai_list             = []
 screen = pygame.display.set_mode(current_map.rect().size)
 width = screen.get_width()
 height = screen.get_height()
-smallfont = pygame.font.SysFont('Times New Roman',42)
-text = smallfont.render('Start game' , True , (255, 255, 255))
-
+smallfont = pygame.font.SysFont('Open Sans',34)
+smallerfont = pygame.font.SysFont('Open Sans',32)
+start_text = smallfont.render('Start game' , True , (255, 255, 255))
+game_mode_text = smallerfont.render('Gamemode', True, (255,255,255))
+quit_text = smallfont.render('Quit', True, (255,255,255))
 pygame.display.set_caption("Start Menu")
 
 #Creates a start menu
@@ -72,16 +74,20 @@ while start_menu:
     
     screen.fill((255, 255, 255))
     pygame.draw.rect(screen, (10,10,10),[width/4,height/4,width/2,height/7])
-    screen.blit(text , (width/4,height/4))
+    pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 65 ,width/2,height/7])
+    pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 130 ,width/2,height/7])
+    screen.blit(start_text , (width/4,height/4)) 
+    screen.blit(game_mode_text , (width/4,height/4 + 65)) 
+    screen.blit(quit_text , ((width/4) + 50,height/4 + 130)) 
     pygame.display.update()
     for event in pygame.event.get():
-
         if event.type == QUIT:
             pygame.quit()
         if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
             start_menu = False
             pygame.display.set_caption("Capture The Flag")
             running = True
+    
 
 #-- Generate the background
 background = pygame.Surface(screen.get_size())

@@ -64,19 +64,13 @@ class Ai:
 
         if hasattr(res, 'shape'):
             if hasattr(res.shape, 'parent'):
-                if isinstance(res.shape.parent, gameobjects.Box):
-                    if getattr(res.shape.parent, "collision_type") == 3:
+                if isinstance(res.shape.parent, gameobjects.Box) or\
+                    isinstance(res.shape.parent, gameobjects.Tank):
+                    if getattr(res.shape.parent, "collision_type") in {2, 3}:
                         # box = Vec2d(getattr(res.shape.parent, 'x'), getattr(res.shape.parent, 'y'))
                         if pygame.time.get_ticks() >= self.tank.shot_delay:
                             self.game_objects_list.append(self.tank.shoot(self.space))
                             self.tank.shot_delay = pygame.time.get_ticks() + 1000
-
-                elif isinstance(res.shape.parent, gameobjects.Tank):
-                    if pygame.time.get_ticks() >= self.tank.shot_delay:
-                        self.game_objects_list.append(self.tank.shoot(self.space))
-                        self.tank.shot_delay = pygame.time.get_ticks() + 1000
-            else:
-                pass
 
     def should_turn_right(self, angle_to_next_coord, tank_angle):
         if tank_angle >= angle_to_next_coord:
@@ -137,14 +131,16 @@ class Ai:
 
             distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
             current_distance = 100
-
-            while (current_distance - distance_to_next_coord) > 0:
+            
+            while (current_distance - distance_to_next_coord) > 0: #Kan förekomma buggar pga current_distance = 100, ändra senare!
                 self.tank.accelerate()
 
+                
                 current_distance = self.tank.body.position.get_distance(next_coord)
                 yield
                 distance_to_next_coord = self.tank.body.position.get_distance(next_coord)
                 yield
+            
             
             #self.tank.stop_moving()
             self.update_grid_pos()

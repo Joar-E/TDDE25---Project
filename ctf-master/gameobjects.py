@@ -148,6 +148,7 @@ class Tank(GamePhysicsObject):
         self.max_speed      = Tank.NORMAL_MAX_SPEED     # Impose a maximum speed to the tank
         self.start_position = pymunk.Vec2d(x, y)        # Define the start position, which is also the position where the tank has to return with the flag
         self.shot_delay     = 0
+        self.collision_type = 2
         
 
     def accelerate(self):
@@ -192,6 +193,7 @@ class Tank(GamePhysicsObject):
         self.body.angular_velocity += self.rotation * self.ACCELERATION
         self.body.angular_velocity = clamp(self.max_speed, self.body.angular_velocity)
 
+        # print(self.body.position.get_distance(pymunk.Vec2d(0.5 , 2.5)))
 
 
     def post_update(self):
