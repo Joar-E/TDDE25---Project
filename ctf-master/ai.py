@@ -101,7 +101,7 @@ class Ai:
         
         while True:
 
-            path = self.find_shortest_path()
+            path = self.A_star_search()
             if len(path) < 2:
                 #path = self.find_shortest_path()
                 yield
@@ -179,7 +179,87 @@ class Ai:
                     visited_node.add(tiles.int_tuple)
                     
         return deque(shortest_path)
+
+
+    def traceback(self, path_dict, current):
+        """
+        Reconstructs a path from end to start
+        """
+        shortest_path = deque()
+        shortest_path.append(current)
+
+        while True:
+            current = path_dict[current.int_tuple]
+            current = Vec2d(current)
+            shortest_path.appendleft(Vec2d(current))
+            if current == self.grid_pos:
+                return shortest_path
+
+
+    def A_star_search(self):
+        """
+        A* search usig the euclidean distance between the start node
+        and end node as the heuristic,
+        with constant weights through the whole graph
+        """
+        def heuristic(self, node):
+            # Pythagoras theorem is used to get the distance
+            h = node.get_dist_sqrd(self.get_target_tile())
+            return h
+        # g is the total cost to get from the start to a certain node
+        # f = g + heuristic, the total score of a node
+        # The score of each node is kept in a dictionary
+        f_score = defaultdict()
+        g_score = defaultdict()
+        # Came from keeps track of from wich node each node was accessed
+        came_from = defaultdict()
+
+        # open_list contains nodes we might want to explore
+        # closed_list contains ones where we've already been
+        open_list = deque()
+        closed_list = deque()
+
+        root_node = self.grid_pos
+        end = self.get_target_tile()
+        open_list.append(root_node)
+
+        g_score[root_node.int_tuple] = 0
+        f_score[root_node.int_tuple] = 0
+        came_from[root_node.int_tuple] = root_node.int_tuple
+
+        while open_list:
+            current = open_list[0]
+            # The node with the lowest f value in open list is the current one
+            for node in open_list:
+                if f_score[node.int_tuple] < f_score[current.int_tuple]:
+                    current = node
             
+            if current == end:
+                return self.traceback(came_from, current)
+                
+            open_list.remove(current)
+
+            for neighbor in self.get_tile_neighbors(current):
+                if neighbor not in closed_list:
+                    # tentative g score is the total cost from the start 
+                    # to the neighbor node through current node
+                    tentative_g_score = g_score[current.int_tuple] + 1
+                    g_score[neighbor.int_tuple] = g_score[current.int_tuple] + 1
+
+                    if tentative_g_score <= g_score[neighbor.int_tuple]:
+                        # values for the neighbor are created
+                        came_from[neighbor.int_tuple] = current.int_tuple
+                        g_score[neighbor.int_tuple] = tentative_g_score
+                        f_score[neighbor.int_tuple] = tentative_g_score + heuristic(self, neighbor)
+                        
+                        if neighbor not in open_list:
+                            open_list.appendleft(neighbor)
+            closed_list.append(current)
+
+        # If the algorithm fails to find a path it returns an empty deque
+        return deque()
+
+
     def get_target_tile(self):
         """ Returns position of the flag if we don't have it. If we do have the flag,
             return the position of our home base.

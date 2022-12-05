@@ -287,9 +287,8 @@ while running:
     player_list = [player1]
     
     for tank_ai in ai_list:
-
         ai.Ai.decide(tank_ai)
-        
+
     for tanks in tanks_list:
             gameobjects.Tank.try_grab_flag(tanks, flag)
             if tanks.has_won():
