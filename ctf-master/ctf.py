@@ -6,6 +6,7 @@ from pygame.color import *
 import pymunk
 from pymunk import Vec2d
 import math
+import sounds
 #----- Initialisation -----#
 
 #-- Initialise the display
@@ -85,6 +86,7 @@ while start_menu:
             pygame.quit()
         if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
             start_menu = False
+            sounds.background_music.play(-1)
             pygame.display.set_caption("Capture The Flag")
             running = True
     
@@ -230,6 +232,8 @@ def collision_bullet_box(arb, space, data):
     space.remove(bullet_shape, bullet_shape.body)
     game_objects_list.remove(bullet_shape.parent)
 
+    sounds.box_sound.set_volume(0.2)
+    sounds.box_sound.play()
     space.remove(box, box.body)
     game_objects_list.remove(box.parent)
     play_explosion_anim(bullet_shape.parent)
@@ -299,6 +303,7 @@ while running:
         # close button of the wiendow) or if the user press the escape key.
         
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            sounds.flag_sound.play()
             running = False
         
         tank_movement_handler(player_list)
@@ -346,4 +351,6 @@ while running:
 
     #   Control the game framerate
     clock.tick(FRAMERATE)
+
+
 

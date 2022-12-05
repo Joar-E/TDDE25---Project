@@ -1,4 +1,5 @@
 import images
+import sounds
 import pygame
 import pymunk
 import math
@@ -216,10 +217,13 @@ class Tank(GamePhysicsObject):
             # Check if the tank is close to the flag
             flag_pos = pymunk.Vec2d(flag.x, flag.y)
             if((flag_pos - self.body.position).length < 0.8):
+                if self.max_speed != Tank.FLAG_MAX_SPEED:
+                    sounds.flag_sound.play()
                 # Grab the flag !
                 self.flag           = flag
                 flag.is_on_tank     = True
                 self.max_speed  = Tank.FLAG_MAX_SPEED
+                
 
 
     def has_won(self):
@@ -228,10 +232,13 @@ class Tank(GamePhysicsObject):
     
     def shoot(self, space):
         """ Call this function to shoot a missile"""
-        
+        sounds.shoot_sound.set_volume(0.5)
+        sounds.shoot_sound.play()
         return Bullet(self.body.position[0], self.body.position[1], self.body.angle, images.bullet, space, self)
 
     def respawn(self):
+        
+        sounds.tank_shot_sound.play()
         self.flag = None
         self.body.position = self.start_position 
         self.body.angle = math.radians(self.orientation)
