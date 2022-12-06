@@ -68,9 +68,8 @@ class Ai:
                     isinstance(res.shape.parent, gameobjects.Tank):
                     if getattr(res.shape.parent, "collision_type") in {2, 3}:
                         # box = Vec2d(getattr(res.shape.parent, 'x'), getattr(res.shape.parent, 'y'))
-                        if pygame.time.get_ticks() >= self.tank.shot_delay:
+                        if self.tank.can_shoot():
                             self.game_objects_list.append(self.tank.shoot(self.space))
-                            self.tank.shot_delay = pygame.time.get_ticks() + 1000
 
     def should_turn_right(self, angle_to_next_coord, tank_angle):
         if tank_angle >= angle_to_next_coord:

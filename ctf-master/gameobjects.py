@@ -230,10 +230,17 @@ class Tank(GamePhysicsObject):
         """ Check if the current tank has won (if it is has the flag and it is close to its start position). """
         return self.flag != None and (self.start_position - self.body.position).length < 0.5
     
+    def can_shoot(self):
+        if pygame.time.get_ticks() >= self.shot_delay:
+            self.shot_delay = pygame.time.get_ticks() + 1000
+            return True
+        return False
+
     def shoot(self, space):
         """ Call this function to shoot a missile"""
         sounds.shoot_sound.set_volume(0.5)
         sounds.shoot_sound.play()
+        
         return Bullet(self.body.position[0], self.body.position[1], self.body.angle, images.bullet, space, self)
 
     def respawn(self):
