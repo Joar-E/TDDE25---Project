@@ -197,9 +197,8 @@ class Ai:
 
     def A_star_search(self):
         """
-        A* search usig the euclidean distance between the start node
-        and end node as the heuristic,
-        with constant weights through the whole graph
+        A* search for finding the shortest path for a tank
+        Once discovered all edges have a value of 1
         """
         def heuristic(self, node):
             # Manhattan distance is used as the heuristic
@@ -211,7 +210,7 @@ class Ai:
         # The score of each node is kept in a dictionary
         f_score = defaultdict()
         g_score = defaultdict()
-        # Came from keeps track of from wich node each node was accessed
+        # Keep track from wich node each node was accessed
         came_from = defaultdict()
 
         # open_list contains nodes we might want to explore
@@ -236,18 +235,19 @@ class Ai:
             
             if current == end:
                 return self.traceback(came_from, current)
-                
+            # Start exploring the current node    
             open_list.remove(current)
-
             for neighbor in self.get_tile_neighbors(current):
                 if neighbor not in closed_list:
-                    # tentative g score is the total cost from the start 
-                    # to the neighbor node through current node
+                    # the cost to from start to neighbor through current
+                    # (since every edge has the same value we add a constant 1)
                     tentative_g_score = g_score[current.int_tuple] + 1
                     if neighbor.int_tuple not in g_score:
-                        g_score[neighbor.int_tuple] = g_score[current.int_tuple] + 1
+                        # because we don't know the cost of the 
+                        # neighboring node yet we set it to infinity
+                        g_score[neighbor.int_tuple] = math.inf  
 
-                    if tentative_g_score <= g_score[neighbor.int_tuple]:
+                    if tentative_g_score < g_score[neighbor.int_tuple]:
                         # values for the neighbor are created
                         came_from[neighbor.int_tuple] = current.int_tuple
                         g_score[neighbor.int_tuple] = tentative_g_score
@@ -255,6 +255,7 @@ class Ai:
                         
                         if neighbor not in open_list:
                             open_list.appendleft(neighbor)
+            # The current node has been fully explored
             closed_list.append(current)
 
         # If the algorithm fails to find a path it returns an empty deque
