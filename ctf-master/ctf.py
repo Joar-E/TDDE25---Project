@@ -285,9 +285,10 @@ def collision_bullet_box(arb, space, data):
 def ind_collision_bullet_box(arb, space, data):
     """Handels collisions between bullets and indestructable objects"""
     bullet_shape = arb.shapes[0]
-    space.remove(bullet_shape, bullet_shape.body)
-    game_objects_list.remove(bullet_shape.parent)
-    play_explosion_anim(bullet_shape.parent)
+    if bullet_shape.parent in game_objects_list:
+        space.remove(bullet_shape, bullet_shape.body)
+        game_objects_list.remove(bullet_shape.parent)
+        play_explosion_anim(bullet_shape.parent)
     return False
 
 
