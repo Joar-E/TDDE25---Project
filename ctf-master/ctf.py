@@ -56,6 +56,22 @@ game_objects_list   = []
 tanks_list          = []
 ai_list             = []
 
+vplayer1 = {"Index" : 0,\
+           "Forward" : pygame.K_UP,\
+           "Reverse": pygame.K_DOWN,\
+           "Turn_left": pygame.K_LEFT,\
+           "Turn_right": pygame.K_RIGHT,\
+           "Shoot": pygame.K_SPACE,\
+           "Time": 0}
+
+vplayer2 = {"Index": 1,\
+        "Forward": pygame.K_w,\
+        "Reverse": pygame.K_s,\
+        "Turn_left": pygame.K_a,\
+        "Turn_right": pygame.K_d,\
+        "Shoot": pygame.K_q,\
+        "Time": 0}
+
 
 
 #-- Resize the screen to the size of the current level
@@ -142,6 +158,23 @@ for i in range(0, len(current_map.start_positions)):
         ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
         ai_list.append(ai_tank)
 
+player1 = {"Index": 0,
+           pygame.K_UP: tanks_list[0].accelerate,
+           pygame.K_DOWN: tanks_list[0].decelerate,
+           pygame.K_LEFT: tanks_list[0].turn_left,
+           pygame.K_RIGHT: tanks_list[0].turn_right,
+           pygame.K_SPACE: tanks_list[0].shoot
+           }
+
+player2 = {"Index": 1,
+           pygame.K_w: tanks_list[1].accelerate,
+           pygame.K_s: tanks_list[1].decelerate,
+           pygame.K_a: tanks_list[1].turn_left,
+           pygame.K_d: tanks_list[1].turn_right#,\
+           #pygame.K_q: tanks_list[1].shoot(space)
+           }
+    
+player_list = [vplayer1]
 
 #-- Create the flag
 flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
@@ -173,10 +206,9 @@ def tank_movement_handler(player_list):
 
             tank = tanks_list[player["Index"]]
 
-            if event.key == player["Shoot"] and \
-                (pygame.time.get_ticks() >= tank.shot_delay):
-                game_objects_list.append(tank.shoot(space))
-                tank.shot_delay = pygame.time.get_ticks() + 1000 
+            if event.key == player["Shoot"]:
+                if tank.can_shoot():
+                    game_objects_list.append(tank.shoot(space))
 
         if event.type == KEYUP:
             if event.key == player["Forward"] or event.key == player["Reverse"]:
@@ -185,7 +217,17 @@ def tank_movement_handler(player_list):
             if event.key == player["Turn_left"] or event.key == player["Turn_right"]:
                 tanks_list[player["Index"]].stop_turning()
 
-
+def tank_movement_handler2(player_list):
+    for player in player_list:
+        if event.type == KEYDOWN:
+            if event.key in player:
+                player.get(event.key)()
+        
+        if event.type == KEYUP:
+            if event.key in {list(player)[0], list(player)[1]} :
+                tanks_list[player["Index"]].stop_moving()
+            if event.key in {list(player)[2], list(player)[3]} :
+                tanks_list[player["Index"]].stop_turning()
 
 def play_explosion_anim(bullet):
     game_objects_list.append(bullet.explosion(space))
@@ -229,14 +271,15 @@ def collision_bullet_box(arb, space, data):
     """Handles collisions between bullets and boxes"""
     bullet_shape = arb.shapes[0]
     box = arb.shapes[1]
-    space.remove(bullet_shape, bullet_shape.body)
-    game_objects_list.remove(bullet_shape.parent)
-
     sounds.box_sound.set_volume(0.2)
     sounds.box_sound.play()
-    space.remove(box, box.body)
-    game_objects_list.remove(box.parent)
-    play_explosion_anim(bullet_shape.parent)
+    if bullet_shape.parent in game_objects_list:
+        space.remove(bullet_shape, bullet_shape.body)
+        game_objects_list.remove(bullet_shape.parent)
+
+        space.remove(box, box.body)
+        game_objects_list.remove(box.parent)
+        play_explosion_anim(bullet_shape.parent)
     return False
 
 
@@ -272,28 +315,9 @@ box_c_handler.pre_solve = collision_bullet_box
 #-- Control whether the game run
 
 while running:
-
-    player1 = {"Index" : 0,\
-           "Forward" : pygame.K_UP,\
-           "Reverse": pygame.K_DOWN,\
-           "Turn_left": pygame.K_LEFT,\
-           "Turn_right": pygame.K_RIGHT,\
-           "Shoot": pygame.K_SPACE,\
-           "Time": 0}
-
-    player2 = {"Index": 1,\
-           "Forward": pygame.K_w,\
-           "Reverse": pygame.K_s,\
-           "Turn_left": pygame.K_a,\
-           "Turn_right": pygame.K_d,\
-           "Shoot": pygame.K_q,\
-           "Time": 0}
-    
-    player_list = [player1]
     
     for tank_ai in ai_list:
-        ai.Ai.decide(tank_ai)
-
+        tank_ai.decide()
     for tanks in tanks_list:
             gameobjects.Tank.try_grab_flag(tanks, flag)
             if tanks.has_won():
