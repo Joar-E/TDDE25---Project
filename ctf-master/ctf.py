@@ -271,14 +271,15 @@ def collision_bullet_box(arb, space, data):
     """Handles collisions between bullets and boxes"""
     bullet_shape = arb.shapes[0]
     box = arb.shapes[1]
-    space.remove(bullet_shape, bullet_shape.body)
-    game_objects_list.remove(bullet_shape.parent)
-
     sounds.box_sound.set_volume(0.2)
     sounds.box_sound.play()
-    space.remove(box, box.body)
-    game_objects_list.remove(box.parent)
-    play_explosion_anim(bullet_shape.parent)
+    if bullet_shape.parent in game_objects_list:
+        space.remove(bullet_shape, bullet_shape.body)
+        game_objects_list.remove(bullet_shape.parent)
+
+        space.remove(box, box.body)
+        game_objects_list.remove(box.parent)
+        play_explosion_anim(bullet_shape.parent)
     return False
 
 
