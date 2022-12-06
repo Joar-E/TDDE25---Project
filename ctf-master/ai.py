@@ -203,8 +203,9 @@ class Ai:
         with constant weights through the whole graph
         """
         def heuristic(self, node):
-            # Pythagoras theorem is used to get the distance
-            h = node.get_dist_sqrd(self.get_target_tile())
+            # Manhattan distance is used as the heuristic
+            goal = self.get_target_tile()
+            h = (abs(node[0] - goal[0]) + abs(node[1] - goal[1]))
             return h
         # g is the total cost to get from the start to a certain node
         # f = g + heuristic, the total score of a node
@@ -244,7 +245,8 @@ class Ai:
                     # tentative g score is the total cost from the start 
                     # to the neighbor node through current node
                     tentative_g_score = g_score[current.int_tuple] + 1
-                    g_score[neighbor.int_tuple] = g_score[current.int_tuple] + 1
+                    if neighbor.int_tuple not in g_score:
+                        g_score[neighbor.int_tuple] = g_score[current.int_tuple] + 1
 
                     if tentative_g_score <= g_score[neighbor.int_tuple]:
                         # values for the neighbor are created
