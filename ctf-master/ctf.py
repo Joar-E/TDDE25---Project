@@ -56,26 +56,11 @@ game_objects_list   = []
 tanks_list          = []
 ai_list             = []
 
-# vplayer1 = {"Index" : 0,\
-#            "Forward" : pygame.K_UP,\
-#            "Reverse": pygame.K_DOWN,\
-#            "Turn_left": pygame.K_LEFT,\
-#            "Turn_right": pygame.K_RIGHT,\
-#            "Shoot": pygame.K_SPACE,\
-#            "Time": 0}
-
-# vplayer2 = {"Index": 1,\
-#         "Forward": pygame.K_w,\
-#         "Reverse": pygame.K_s,\
-#         "Turn_left": pygame.K_a,\
-#         "Turn_right": pygame.K_d,\
-#         "Shoot": pygame.K_q,\
-#         "Time": 0}
-
-
 
 #-- Resize the screen to the size of the current level
 screen = pygame.display.set_mode(current_map.rect().size)
+
+#-- Creating and rendering fonts
 width = screen.get_width()
 height = screen.get_height()
 smallfont = pygame.font.SysFont('Open Sans',34)
@@ -131,6 +116,16 @@ for x in range(0, current_map.width):
             box = gameobjects.get_box_with_type(x, y, box_type, space)
             game_objects_list.append(box)
 
+#-- Create the flag
+flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
+game_objects_list.append(flag)
+
+#-- Create the bases
+for i in range(0, len(current_map.start_positions)):
+    position = current_map.start_positions[i]
+    base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
+    game_objects_list.append(base)
+
 #Creates barriers
 
 static_body = space.static_body
@@ -176,46 +171,6 @@ player2 = {"Index": 1,
     
 player_list = [player1, player2]
 
-#-- Create the flag
-flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
-game_objects_list.append(flag)
-
-#-- Create the bases
-for i in range(0, len(current_map.start_positions)):
-    position = current_map.start_positions[i]
-    base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
-    game_objects_list.append(base)
-
-        
-# def tank_movement_handler(player_list):
-#     """Controls the movement and shooting for all tanks"""
-#     for player in player_list:
-
-#         if event.type == KEYDOWN:
-#             if event.key == player["Forward"]:
-#                 tanks_list[player["Index"]].accelerate()
-
-#             if event.key == player["Reverse"]:
-#                 tanks_list[player["Index"]].decelerate()
-
-#             if event.key == player["Turn_left"]:
-#                 tanks_list[player["Index"]].turn_left()
-
-#             if event.key == player["Turn_right"]:
-#                 tanks_list[player["Index"]].turn_right()
-
-#             tank = tanks_list[player["Index"]]
-
-#             if event.key == player["Shoot"]:
-#                 if tank.can_shoot():
-#                     game_objects_list.append(tank.shoot(space))
-
-#         if event.type == KEYUP:
-#             if event.key == player["Forward"] or event.key == player["Reverse"]:
-#                 tanks_list[player["Index"]].stop_moving()
-
-#             if event.key == player["Turn_left"] or event.key == player["Turn_right"]:
-#                 tanks_list[player["Index"]].stop_turning()
 
 def tank_movement_handler(player_list):
     for player in player_list:
@@ -321,8 +276,8 @@ box_c_handler.pre_solve = collision_bullet_box
 
 while running:
     
-    # for tank_ai in ai_list:
-    #     tank_ai.decide()
+    for tank_ai in ai_list:
+        tank_ai.decide()
 
     for tanks in tanks_list:
             gameobjects.Tank.try_grab_flag(tanks, flag)

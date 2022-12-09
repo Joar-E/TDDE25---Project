@@ -13,6 +13,7 @@ def load_image(file):
     return surface.convert_alpha()
 
 def load_animation(file,rows, columns, x, y):
+    """ Load an animation sprite sheet from datat directory """
     image = load_image(file)
     image = pygame.transform.scale(image, (x, y))
     output=[]
