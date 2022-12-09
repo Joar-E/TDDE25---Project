@@ -170,11 +170,11 @@ player2 = {"Index": 1,
            pygame.K_w: tanks_list[1].accelerate,
            pygame.K_s: tanks_list[1].decelerate,
            pygame.K_a: tanks_list[1].turn_left,
-           pygame.K_d: tanks_list[1].turn_right#,\
-           #pygame.K_q: tanks_list[1].shoot(space)
+           pygame.K_d: tanks_list[1].turn_right,
+           pygame.K_q: tanks_list[1].shoot
            }
     
-player_list = [player1]
+player_list = [player1, player2]
 
 #-- Create the flag
 flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
@@ -321,8 +321,8 @@ box_c_handler.pre_solve = collision_bullet_box
 
 while running:
     
-    for tank_ai in ai_list:
-        tank_ai.decide()
+    # for tank_ai in ai_list:
+    #     tank_ai.decide()
 
     for tanks in tanks_list:
             gameobjects.Tank.try_grab_flag(tanks, flag)

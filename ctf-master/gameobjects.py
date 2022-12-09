@@ -137,7 +137,7 @@ class Tank(GamePhysicsObject):
     ACCELERATION = 0.4
     NORMAL_MAX_SPEED = 2.0
     FLAG_MAX_SPEED = NORMAL_MAX_SPEED * 0.5
-
+    
     def __init__(self, x, y, orientation, sprite, space):
         super().__init__(x, y, orientation, sprite, space, True, 2)
         # Define variable used to apply motion to the tanks
@@ -230,11 +230,13 @@ class Tank(GamePhysicsObject):
         """ Check if the current tank has won (if it is has the flag and it is close to its start position). """
         return self.flag != None and (self.start_position - self.body.position).length < 0.5
     
+
     def can_shoot(self):
         if pygame.time.get_ticks() >= self.shot_delay:
             self.shot_delay = pygame.time.get_ticks() + 1000
             return True
         return False
+
 
     def shoot(self, space):
         """ Call this function to shoot a missile"""
@@ -243,6 +245,7 @@ class Tank(GamePhysicsObject):
         
         return Bullet(self.body.position[0], self.body.position[1], self.body.angle, images.bullet, space, self)
 
+
     def respawn(self):
         
         sounds.tank_shot_sound.play()
@@ -250,6 +253,7 @@ class Tank(GamePhysicsObject):
         self.body.position = self.start_position 
         self.body.angle = math.radians(self.orientation)
     
+
     def drop_flag(self, flag):
         flag.is_on_tank = False
     
@@ -264,9 +268,11 @@ class Bullet(GamePhysicsObject):
         self.orientation = math.degrees(self.body.angle)
         self.velocity = 7.0
 
+
     def update(self):
         self.body.velocity = pymunk.Vec2d((0, self.velocity)).rotated(self.orientation)
     
+
     def explosion(self, space):
         explosion = Explosion(self.body.position[0], self.body.position[1])
 
