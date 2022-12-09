@@ -26,7 +26,8 @@ def periodic_difference_of_angles(angle1, angle2):
 class Ai:
     """ A simple ai that finds the shortest path to the target using 
     a breadth first search. Also capable of shooting other tanks and or wooden
-    boxes. """
+    boxes. 
+    """
 
     def __init__(self, tank,  game_objects_list, tanks_list, space, currentmap):
         self.tank               = tank
@@ -67,11 +68,13 @@ class Ai:
                 if isinstance(res.shape.parent, gameobjects.Box) or\
                     isinstance(res.shape.parent, gameobjects.Tank):
                     if getattr(res.shape.parent, "collision_type") in {2, 3}:
-                        # box = Vec2d(getattr(res.shape.parent, 'x'), getattr(res.shape.parent, 'y'))
                         if self.tank.can_shoot():
                             self.game_objects_list.append(self.tank.shoot(self.space))
 
-    def should_turn_right(self, angle_to_next_coord, tank_angle):
+    def should_turn_right(self, angle_to_next_coord, tank_angle) -> bool:
+        """ Determine if the tank should turn right based on it's angle
+            and the angle to the next coordinate 
+        """
         if tank_angle >= angle_to_next_coord:
             return tank_angle - math.pi > angle_to_next_coord 
 
@@ -80,6 +83,7 @@ class Ai:
         
 
     def angle_2_pi_converter(self, angle):
+        """ Returns the angles without unnecessary 2*Pi """
         if angle >= 0:
              
             return angle % (2*math.pi)
@@ -87,6 +91,7 @@ class Ai:
             return (2*math.pi + angle) % (2*math.pi)
     
     def diff_between_angles(self, angle1, angle2):
+        """ Returns the smallest difference between two angles """
         difference = angle1 - angle2
         if difference > math.pi:
             difference = math.pi - difference
@@ -96,7 +101,6 @@ class Ai:
         """ A generator that iteratively goes through all the required steps
             to move to our goal.
         """ 
-        
         
         while True:
 
@@ -302,8 +306,10 @@ class Ai:
  # Find the coordinates of the tiles' four neighbors
         return list(filter(self.filter_tile_neighbors, neighbors))
 
-    def filter_tile_neighbors (self, coord):
-        
+    def filter_tile_neighbors (self, coord) -> bool:
+        """ Filters the neighboring tiles based on which of tiles
+            the tank is allowed on 
+        """
         if coord[0] <= self.MAX_X and coord[0] >= 0\
              and coord[1] <= self.MAX_Y and coord[1] >= 0:
 

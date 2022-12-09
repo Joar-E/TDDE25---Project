@@ -153,6 +153,8 @@ for i in range(0, len(current_map.start_positions)):
         ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
         ai_list.append(ai_tank)
 
+
+#-- Player dictionaries
 player1 = {"Index": 0,
            pygame.K_UP: tanks_list[0].accelerate,
            pygame.K_DOWN: tanks_list[0].decelerate,
@@ -173,6 +175,8 @@ player_list = [player1, player2]
 
 
 def tank_movement_handler(player_list):
+    """ A function for controlling the playble tanks"""
+
     for player in player_list:
         tank = tanks_list[player["Index"]]
         if event.type == KEYDOWN:
@@ -189,7 +193,9 @@ def tank_movement_handler(player_list):
             if event.key in {list(player)[3], list(player)[4]} :
                 tank.stop_turning()
 
+
 def play_explosion_anim(bullet):
+    """ Playes the explosion animation at the coordinates of the bullet"""
     game_objects_list.append(bullet.explosion(space))
 
     for obj in game_objects_list:
@@ -198,6 +204,7 @@ def play_explosion_anim(bullet):
                 game_objects_list.remove(obj)
 
 
+#-- Functions for collision handling
 def collision_bullet_bullet(arb, space, data):
     """Handles collisions between tanks and bullets"""
     bullet1 = arb.shapes[0]

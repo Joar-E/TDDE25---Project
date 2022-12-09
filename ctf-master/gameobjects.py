@@ -231,7 +231,8 @@ class Tank(GamePhysicsObject):
         return self.flag != None and (self.start_position - self.body.position).length < 0.5
     
 
-    def can_shoot(self):
+    def can_shoot(self) -> bool:
+        """ Returns True if the tank has not fired for 1 second """
         if pygame.time.get_ticks() >= self.shot_delay:
             self.shot_delay = pygame.time.get_ticks() + 1000
             return True
@@ -247,7 +248,7 @@ class Tank(GamePhysicsObject):
 
 
     def respawn(self):
-        
+        """ Called if the tank has died and returns it to its base """
         sounds.tank_shot_sound.play()
         self.flag = None
         self.body.position = self.start_position 
@@ -255,6 +256,7 @@ class Tank(GamePhysicsObject):
     
 
     def drop_flag(self, flag):
+        """ Called if the tank that died was carrying the flag """
         flag.is_on_tank = False
     
     
@@ -274,6 +276,7 @@ class Bullet(GamePhysicsObject):
     
 
     def explosion(self, space):
+        """ Centers the explosion on the bullets x and y coords """
         explosion = Explosion(self.body.position[0], self.body.position[1])
 
         return explosion
@@ -305,7 +308,9 @@ def get_box_with_type(x, y, type, space):
 
 
 class GameVisibleObject(GameObject):
-    """ This class extends GameObject for object that are visible on screen but have no physical representation (bases and flag) """
+    """ This class extends GameObject for object that are visible on screen
+        but have no physical representation (bases and flag) 
+    """
 
     def __init__(self, x, y, sprite):
         """ It takes argument the coordinates (x,y) and the sprite. """
