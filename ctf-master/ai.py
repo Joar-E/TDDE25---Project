@@ -212,8 +212,8 @@ class Ai:
         # g is the total cost to get from the start to a certain node
         # f = g + heuristic, the total score of a node
         # The score of each node is kept in a dictionary
-        f_score = defaultdict()
-        g_score = defaultdict()
+        f_score = defaultdict(lambda: math.inf)
+        g_score = defaultdict(lambda: math.inf)
         # Keep track from wich node each node was accessed
         came_from = defaultdict()
 
@@ -246,11 +246,6 @@ class Ai:
                     # the cost to from start to neighbor through current
                     # (since every edge has the same value we add a constant 1)
                     tentative_g_score = g_score[current.int_tuple] + 1
-                    if neighbor.int_tuple not in g_score:
-                        # because we don't know the cost of the 
-                        # neighboring node yet we set it to infinity
-                        g_score[neighbor.int_tuple] = math.inf  
-
                     if tentative_g_score < g_score[neighbor.int_tuple]:
                         # values for the neighbor are created
                         came_from[neighbor.int_tuple] = current.int_tuple
