@@ -4,6 +4,8 @@ import pygame
 from pymunk import Vec2d
 import gameobjects
 from collections import defaultdict, deque
+import heapq
+from heapq import heappush, heappop
 
 # NOTE: use only 'map0' during development!
 
@@ -189,13 +191,12 @@ class Ai:
         Reconstructs a path from end to start
         """
         shortest_path = deque()
-        shortest_path.append(current)
+        shortest_path.append(Vec2d(current))
 
         while True:
-            current = path_dict[current.int_tuple]
-            current = Vec2d(current)
+            current = path_dict[current]
             shortest_path.appendleft(Vec2d(current))
-            if current == self.grid_pos:
+            if Vec2d(current) == self.grid_pos:
                 return shortest_path
 
 
@@ -220,39 +221,37 @@ class Ai:
         came_from = defaultdict()
 
         # contains nodes we might want to explore
-        open_list = deque()
+        heap_queue = []
 
         root_node = self.grid_pos
         end = self.get_target_tile()
-        open_list.append(root_node)
 
         g_score[root_node.int_tuple] = 0
         f_score[root_node.int_tuple] = 0
         came_from[root_node.int_tuple] = root_node.int_tuple
+        # The heap queue contains both the f score of a node and the node itself, so 
+        # that the node with the lowest f score always can be sorted and placed first
+        heappush(heap_queue, (f_score[root_node.int_tuple], root_node.int_tuple))        
 
-        while open_list:
-            current = open_list[0]
-            # The node with the lowest f value in open list is the current one
-            for node in open_list:
-                if f_score[node.int_tuple] < f_score[current.int_tuple]:
-                    current = node
-            
-            if current == end:
-                return self.traceback(came_from, current)
+        while heap_queue:
+            # The node with the lowest f value is the current one
+            current = heappop(heap_queue)
+                        
+            if current[1] == end:
+                return self.traceback(came_from, current[1])
             # Start exploring the current node    
-            open_list.remove(current)
-            for neighbor in self.get_tile_neighbors(current):
+            for neighbor in self.get_tile_neighbors(Vec2d(current[1])):
                     # the cost from start to neighbor through current
                     # (since every edge has the same value we add a constant 1)
-                    tentative_g_score = g_score[current.int_tuple] + 1
+                    tentative_g_score = g_score[current[1]] + 1
                     if tentative_g_score < g_score[neighbor.int_tuple]:
                         # values for the neighbor are created
-                        came_from[neighbor.int_tuple] = current.int_tuple
+                        came_from[neighbor.int_tuple] = current[1]
                         g_score[neighbor.int_tuple] = tentative_g_score
                         f_score[neighbor.int_tuple] = tentative_g_score + self.heuristic(neighbor)
                         
-                        if neighbor not in open_list:
-                            open_list.appendleft(neighbor)
+                        if (f_score[neighbor.int_tuple], neighbor) not in heap_queue:
+                            heappush(heap_queue, (f_score[neighbor.int_tuple], neighbor.int_tuple))
 
         # If the algorithm fails to find a path it returns an empty deque
         return deque()
