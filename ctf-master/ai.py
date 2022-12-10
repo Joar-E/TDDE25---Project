@@ -199,28 +199,28 @@ class Ai:
                 return shortest_path
 
 
+    def heuristic(self, node):
+        """The manhattan distance between a node and the target"""
+        goal = self.get_target_tile()
+        h = (abs(node[0] - goal[0]) + abs(node[1] - goal[1]))
+        return h
+
+
     def A_star_search(self):
         """
         A* search for finding the shortest path for a tank
         Once discovered all edges have a value of 1
         """
-        def heuristic(self, node):
-            # Manhattan distance is used as the heuristic
-            goal = self.get_target_tile()
-            h = (abs(node[0] - goal[0]) + abs(node[1] - goal[1]))
-            return h
-        # g is the total cost to get from the start to a certain node
-        # f = g + heuristic, the total score of a node
+        # f = g + heuristic, f is the total score of a node
+        # g is the cost to get from the start to a certain node
         # The score of each node is kept in a dictionary
         f_score = defaultdict(lambda: math.inf)
         g_score = defaultdict(lambda: math.inf)
         # Keep track from wich node each node was accessed
         came_from = defaultdict()
 
-        # open_list contains nodes we might want to explore
-        # closed_list contains ones where we've already been
+        # contains nodes we might want to explore
         open_list = deque()
-        closed_list = deque()
 
         root_node = self.grid_pos
         end = self.get_target_tile()
@@ -242,20 +242,17 @@ class Ai:
             # Start exploring the current node    
             open_list.remove(current)
             for neighbor in self.get_tile_neighbors(current):
-                if neighbor not in closed_list:
-                    # the cost to from start to neighbor through current
+                    # the cost from start to neighbor through current
                     # (since every edge has the same value we add a constant 1)
                     tentative_g_score = g_score[current.int_tuple] + 1
                     if tentative_g_score < g_score[neighbor.int_tuple]:
                         # values for the neighbor are created
                         came_from[neighbor.int_tuple] = current.int_tuple
                         g_score[neighbor.int_tuple] = tentative_g_score
-                        f_score[neighbor.int_tuple] = tentative_g_score + heuristic(self, neighbor)
+                        f_score[neighbor.int_tuple] = tentative_g_score + self.heuristic(neighbor)
                         
                         if neighbor not in open_list:
                             open_list.appendleft(neighbor)
-            # The current node has been fully explored
-            closed_list.append(current)
 
         # If the algorithm fails to find a path it returns an empty deque
         return deque()
