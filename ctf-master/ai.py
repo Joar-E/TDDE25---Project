@@ -242,8 +242,13 @@ class Ai:
             # Start exploring the current node    
             for neighbor in self.get_tile_neighbors(Vec2d(current[1])):
                     # the cost from start to neighbor through current
-                    # (since every edge has the same value we add a constant 1)
-                    tentative_g_score = g_score[current[1]] + 1
+                    # (since every edge has the same value we add a constant 1,
+                    # except metal boxes that have an edge cost of 6)
+                    if self.currentmap.boxAt(neighbor[0], neighbor[1]) == 3:
+                        tentative_g_score = g_score[current[1]] + 6
+                    else:    
+                        tentative_g_score = g_score[current[1]] + 1
+
                     if tentative_g_score < g_score[neighbor.int_tuple]:
                         # values for the neighbor are created
                         came_from[neighbor.int_tuple] = current[1]
@@ -305,7 +310,8 @@ class Ai:
              and coord[1] <= self.MAX_Y and coord[1] >= 0:
 
             if self.currentmap.boxAt(coord[0], coord[1]) == 0 or \
-               self.currentmap.boxAt(coord[0], coord[1]) == 2:
+               self.currentmap.boxAt(coord[0], coord[1]) == 2 or \
+               self.currentmap.boxAt(coord[0], coord[1]) == 3:
                 return True
             return False
 
