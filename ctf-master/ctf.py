@@ -87,7 +87,7 @@ while start_menu:
             pygame.quit()
         if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
             start_menu = False
-            sounds.background_music.play(-1)
+            pygame.mixer.music.play(-1)
             pygame.display.set_caption("Capture The Flag")
             running = True
     
