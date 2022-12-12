@@ -163,6 +163,14 @@ player1 = {"Index": 0,
            pygame.K_SPACE: tanks_list[0].shoot
            }
 
+# vplayer1 = {
+#            pygame.K_UP: (tanks_list[0].accelerate, tanks_list[0].stop_moving),
+#            pygame.K_DOWN: (tanks_list[0].decelerate, tanks_list[0].stop_moving),
+#            pygame.K_LEFT: (tanks_list[0].turn_left, tanks_list[0].stop_turning),
+#            pygame.K_RIGHT: (tanks_list[0].turn_right, tanks_list[0].stop_moving),
+#            pygame.K_SPACE: (tanks_list[0].shoot, False)
+#            }
+
 player2 = {"Index": 1,
            pygame.K_w: tanks_list[1].accelerate,
            pygame.K_s: tanks_list[1].decelerate,
