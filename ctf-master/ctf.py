@@ -291,8 +291,8 @@ box_c_handler.pre_solve = collision_bullet_box
 
 while running:
     
-    #for tank_ai in ai_list:
-    #    tank_ai.decide()
+    for tank_ai in ai_list:
+        tank_ai.decide()
 
     for tank in tanks_list:
             gameobjects.Tank.try_grab_flag(tank, flag)
@@ -301,10 +301,9 @@ while running:
                 gameobjects.Tank.update_score(tank)
                 # Remove the flag
                 gameobjects.Tank.drop_flag(tank, flag)
-                game_objects_list.remove(flag)
-                # Respawn the flag
-                flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
-                game_objects_list.append(flag)
+                # Relocate the flag
+                flag.x = current_map.flag_position[0]
+                flag.y = current_map.flag_position[1]
                 # Respawn each tank and show their scores
                 for index, tank in enumerate(tanks_list):
                     gameobjects.Tank.respawn(tank)
