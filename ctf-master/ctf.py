@@ -9,6 +9,10 @@ import math
 import sounds
 #----- Initialisation -----#
 
+#-- Initialise the arg parser
+mode = sys.argv[1:]
+
+
 #-- Initialise the display
 pygame.init()
 
@@ -44,6 +48,9 @@ skip_update = 0
 
 #-- Constants
 FRAMERATE = 50
+# These are later assigned a constant value
+SINGLEPLAYER = False
+MULTIPLAYER= False
 #COOLDOWN_FOR_BULLET = 0
 
 #-- Variables
@@ -137,6 +144,15 @@ pymunk.Segment(static_body, (current_map.width, 0), (0, 0), 0.0)
 
 space.add(*barrier_list)
 
+# Player mode is determined
+if mode == ['--singleplayer']:
+    SINGLEPLAYER = True
+if mode == ['--hot-multiplayer']:
+    MULTIPLAYER = True
+# Provided no arguments the default mode is multiplayer
+if not SINGLEPLAYER or MULTIPLAYER:
+    MULTIPLAYER = True
+
 #-- Create the tanks
 
 
@@ -149,10 +165,16 @@ for i in range(0, len(current_map.start_positions)):
     # Add the tank to the list of tanks
     tanks_list.append(tank)
     game_objects_list.append(tank)
-    if i > 0:
-        ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
-        ai_list.append(ai_tank)
-
+    # Make every tank except one ai 
+    if SINGLEPLAYER:
+        if i > 0:
+            ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
+            ai_list.append(ai_tank)
+    # Make every tank except two ai
+    if MULTIPLAYER:
+        if i > 1:
+            ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
+            ai_list.append(ai_tank)
 
 #-- Player dictionaries
 player1 = {"Index": 0,
@@ -178,8 +200,12 @@ player2 = {"Index": 1,
            pygame.K_d: tanks_list[1].turn_right,
            pygame.K_q: tanks_list[1].shoot
            }
-    
-player_list = [player1, player2]
+
+# Add human players
+if SINGLEPLAYER:
+    player_list = [player1] 
+if MULTIPLAYER:
+    player_list = [player1, player2]
 
 
 def tank_movement_handler(player_list):
