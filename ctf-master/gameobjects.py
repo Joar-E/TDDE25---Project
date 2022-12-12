@@ -150,6 +150,7 @@ class Tank(GamePhysicsObject):
         self.start_position = pymunk.Vec2d(x, y)        # Define the start position, which is also the position where the tank has to return with the flag
         self.shot_delay     = 0
         self.collision_type = 2
+        self.score = 0
         
 
     def accelerate(self):
@@ -258,6 +259,12 @@ class Tank(GamePhysicsObject):
     def drop_flag(self, flag):
         """ Called if the tank that died was carrying the flag """
         flag.is_on_tank = False
+
+    def update_score(self):
+        self.score += 1
+    
+    def get_score(self):
+        return self.score
     
     
         

@@ -283,13 +283,28 @@ box_c_handler.pre_solve = collision_bullet_box
 
 while running:
     
-    for tank_ai in ai_list:
-        tank_ai.decide()
+    #for tank_ai in ai_list:
+    #    tank_ai.decide()
 
-    for tanks in tanks_list:
-            gameobjects.Tank.try_grab_flag(tanks, flag)
-            if tanks.has_won():
-                running = False
+    for tank in tanks_list:
+            gameobjects.Tank.try_grab_flag(tank, flag)
+            if tank.has_won():
+                # Add 1 to it's score
+                gameobjects.Tank.update_score(tank)
+                # Remove the flag
+                gameobjects.Tank.drop_flag(tank, flag)
+                game_objects_list.remove(flag)
+                # Respawn the flag
+                flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
+                game_objects_list.append(flag)
+                # Respawn each tank and show their scores
+                for index, tank in enumerate(tanks_list):
+                    gameobjects.Tank.respawn(tank)
+                    print(f"Player {index + 1}: {gameobjects.Tank.get_score(tank)}")
+                #Restart the main loop
+                continue
+                
+                #running = False
     #-- Handle the events
     for event in pygame.event.get():
         # Check if we receive a QUIT event (for instance, if the user press the
