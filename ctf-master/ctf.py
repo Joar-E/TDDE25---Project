@@ -163,6 +163,10 @@ while menu:
         pygame.display.update()    
         main_clock.tick(60)
 
+# Provided no arguments the default mode is multiplayer
+if not SINGLEPLAYER or MULTIPLAYER:
+    MULTIPLAYER = True
+
 #-- Generate the background
 background = pygame.Surface(screen.get_size())
 
@@ -207,15 +211,6 @@ pymunk.Segment(static_body, (current_map.width, 0), (0, 0), 0.0)
 ]
 
 space.add(*barrier_list)
-
-# Player mode is determined
-if mode == ['--singleplayer']:
-    SINGLEPLAYER = True
-if mode == ['--hot-multiplayer']:
-    MULTIPLAYER = True
-# Provided no arguments the default mode is multiplayer
-if not SINGLEPLAYER or MULTIPLAYER:
-    MULTIPLAYER = True
 
 #-- Create the tanks
 
