@@ -7,6 +7,7 @@ import pymunk
 from pymunk import Vec2d
 import math
 import sounds
+import button
 #----- Initialisation -----#
 
 #-- Initialise the arg parser
