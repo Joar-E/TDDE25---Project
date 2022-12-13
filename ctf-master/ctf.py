@@ -45,7 +45,7 @@ import maps
 
 
 skip_update = 0
-
+main_clock = pygame.time.Clock()
 
 #-- Constants
 FRAMERATE = 50
@@ -71,34 +71,97 @@ screen = pygame.display.set_mode(current_map.rect().size)
 #-- Creating and rendering fonts
 width = screen.get_width()
 height = screen.get_height()
-smallfont = pygame.font.SysFont('Open Sans',34)
-smallerfont = pygame.font.SysFont('Open Sans',32)
-start_text = smallfont.render('Start game' , True , (255, 255, 255))
-game_mode_text = smallerfont.render('Gamemode', True, (255,255,255))
-quit_text = smallfont.render('Quit', True, (255,255,255))
-pygame.display.set_caption("Start Menu")
+font = pygame.font.SysFont("arialblack", 20)
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
+# smallfont = pygame.font.SysFont('Open Sans',34)
+# smallerfont = pygame.font.SysFont('Open Sans',32)
+# start_text = smallfont.render('Start game' , True , (255, 255, 255))
+# game_mode_text = smallerfont.render('Gamemode', True, (255,255,255))
+# quit_text = smallfont.render('Quit', True, (255,255,255))
+# pygame.display.set_caption("Start Menu")
+
+play_button = button.Button(100, 50, width/2, 50)
+game_mode_button = button.Button(100, 50, width/2, 150)
+quit_button = button.Button(100, 50, width/2, 250)
+back_button = button.Button(100, 50, width/2, height/2)
+single_player_button = button.Button(100, 50, width/3, 100)
+hot_seat_mult_button = button.Button(100, 50, width*2/3, 100)
 
 #Creates a start menu
-start_menu = True
-while start_menu:
+# start_menu = True
+# while start_menu:
     
-    screen.fill((255, 255, 255))
-    pygame.draw.rect(screen, (10,10,10),[width/4,height/4,width/2,height/7])
-    pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 65 ,width/2,height/7])
-    pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 130 ,width/2,height/7])
-    screen.blit(start_text , (width/4,height/4)) 
-    screen.blit(game_mode_text , (width/4,height/4 + 65)) 
-    screen.blit(quit_text , ((width/4) + 50,height/4 + 130)) 
-    pygame.display.update()
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-        if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
+#     screen.fill((255, 255, 255))
+#     pygame.draw.rect(screen, (10,10,10),[width/4,height/4,width/2,height/7])
+#     pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 65 ,width/2,height/7])
+#     pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 130 ,width/2,height/7])
+#     screen.blit(start_text , (width/4,height/4)) 
+#     screen.blit(game_mode_text , (width/4,height/4 + 65)) 
+#     screen.blit(quit_text , ((width/4) + 50,height/4 + 130)) 
+#     pygame.display.update()
+#     for event in pygame.event.get():
+#         if event.type == QUIT:
+#             pygame.quit()
+#         if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
+#             start_menu = False
+#             pygame.mixer.music.play(-1)
+#             pygame.display.set_caption("Capture The Flag")
+#             running = True
+running = False
+game_mode_menu = False
+start_menu = True
+menu = True
+while menu:
+    while start_menu:
+        pygame.display.set_caption("Main menu")
+        screen.fill(black)
+
+        if play_button.draw(screen, red, "Play", font, white):
             start_menu = False
-            pygame.mixer.music.play(-1)
+            menu = False
             pygame.display.set_caption("Capture The Flag")
             running = True
-    
+        if game_mode_button.draw(screen, red, "Game mode", font, white):
+            start_menu = False
+            game_mode_menu = True
+        if quit_button.draw(screen, red, "Quit", font, white):
+            pygame.quit()
+            sys.exit()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+        pygame.display.update()    
+        main_clock.tick(60)
+
+    while game_mode_menu:
+        pygame.display.set_caption("Main menu")
+        screen.fill(black)
+
+        if single_player_button.draw(screen, red, "Single Player", font, white):
+            SINGLEPLAYER = True
+        if hot_seat_mult_button.draw(screen, red, "2 players", font, white):
+            MULTIPLAYER = True
+        if back_button.draw(screen, red, "Back", font, white):
+            start_menu = True
+            game_mode_menu = False
+        
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    game_mode_menu = False
+                    start_menu = True
+        pygame.display.update()    
+        main_clock.tick(60)
 
 #-- Generate the background
 background = pygame.Surface(screen.get_size())
