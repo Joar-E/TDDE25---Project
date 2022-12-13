@@ -263,9 +263,13 @@ def collision_bullet_tank(arb, space, data):
         if bullet_shape.parent in game_objects_list:
             space.remove(bullet_shape, bullet_shape.body)
             game_objects_list.remove(bullet_shape.parent)
-            gameobjects.Tank.respawn(tank)
-            gameobjects.Tank.drop_flag(tank, flag)
+            # Remove 1 hp from the tank
+            gameobjects.Tank.decrease_hp(tank)
             play_explosion_anim(bullet_shape.parent)
+            # If the tank has 0 hp respawn it
+            if gameobjects.Tank.get_hit_points(tank) == 0:
+                gameobjects.Tank.respawn(tank)
+                gameobjects.Tank.drop_flag(tank, flag)
 
     return False
 
@@ -334,6 +338,7 @@ while running:
                 for index, tank in enumerate(tanks_list):
                     gameobjects.Tank.respawn(tank)
                     print(f"Player {index + 1}: {gameobjects.Tank.get_score(tank)}")
+                print()
                 #Restart the main loop
                 continue
                 

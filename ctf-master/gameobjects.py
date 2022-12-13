@@ -151,6 +151,7 @@ class Tank(GamePhysicsObject):
         self.shot_delay     = 0
         self.collision_type = 2
         self.score = 0
+        self.hit_points = 2
         
 
     def accelerate(self):
@@ -254,6 +255,8 @@ class Tank(GamePhysicsObject):
         self.flag = None
         self.body.position = self.start_position 
         self.body.angle = math.radians(self.orientation)
+        # Reset the tank to full hp
+        self.reset_hit_points()
     
 
     def drop_flag(self, flag):
@@ -261,10 +264,24 @@ class Tank(GamePhysicsObject):
         flag.is_on_tank = False
 
     def update_score(self):
+        """"Adds one to a tank's score"""
         self.score += 1
     
     def get_score(self):
+        """Used to get the score of a tank"""
         return self.score
+
+    def decrease_hp(self):
+        """Lower the hp of a tank by 1"""
+        self.hit_points -= 1
+    
+    def get_hit_points(self):
+        """Used to get the hp of a tank"""
+        return self.hit_points
+    
+    def reset_hit_points(self):
+        """Give a tank full hp"""
+        self.hit_points = 2
     
     
         
