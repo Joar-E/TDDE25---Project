@@ -10,9 +10,6 @@ import sounds
 import button
 #----- Initialisation -----#
 
-#-- Initialise the arg parser
-mode = sys.argv[1:]
-
 
 #-- Initialise the display
 pygame.init()
@@ -146,8 +143,10 @@ while menu:
 
         if single_player_button.draw(screen, red, "Single Player", font, white):
             SINGLEPLAYER = True
+            MULTIPLAYER = False
         if hot_seat_mult_button.draw(screen, red, "2 players", font, white):
             MULTIPLAYER = True
+            SINGLEPLAYER = False
         if back_button.draw(screen, red, "Back", font, white):
             start_menu = True
             game_mode_menu = False
