@@ -219,44 +219,46 @@ class Ai:
         g_score = defaultdict(lambda: math.inf)
         # Keep track from wich node each node was accessed
         came_from = defaultdict()
-
         # contains nodes we might want to explore
         heap_queue = []
-
-        root_node = self.grid_pos
-        end = self.get_target_tile()
-
-        g_score[root_node.int_tuple] = 0
-        f_score[root_node.int_tuple] = 0
-        came_from[root_node.int_tuple] = root_node.int_tuple
+        # get the start and end nodes
+        root_node = self.grid_pos.int_tuple
+        end = self.get_target_tile().int_tuple
+        # set the values of the root node
+        g_score[root_node] = 0
+        f_score[root_node] = 0
+        came_from[root_node] = root_node
         # The heap queue contains both the f score of a node and the node itself, so 
         # that the node with the lowest f score always can be sorted and placed first
-        heappush(heap_queue, (f_score[root_node.int_tuple], root_node.int_tuple))        
+        heappush(heap_queue, (f_score[root_node], root_node))        
 
         while heap_queue:
             # The node with the lowest f value is the current one
-            current = heappop(heap_queue)
+            current = heappop(heap_queue)[1]
                         
-            if current[1] == end:
-                return self.traceback(came_from, current[1])
+            if current == end:
+                # we found our goal, reconstruct path and return it
+                return self.traceback(came_from, current)
             # Start exploring the current node    
-            for neighbor in self.get_tile_neighbors(Vec2d(current[1])):
-                    # the cost from start to neighbor through current
-                    # (since every edge has the same value we add a constant 1,
-                    # except metal boxes that have an edge cost of 6)
-                    if self.currentmap.boxAt(neighbor[0], neighbor[1]) == 3:
-                        tentative_g_score = g_score[current[1]] + 6
-                    else:    
-                        tentative_g_score = g_score[current[1]] + 1
-
-                    if tentative_g_score < g_score[neighbor.int_tuple]:
-                        # values for the neighbor are created
-                        came_from[neighbor.int_tuple] = current[1]
-                        g_score[neighbor.int_tuple] = tentative_g_score
-                        f_score[neighbor.int_tuple] = tentative_g_score + self.heuristic(neighbor)
-                        
-                        if (f_score[neighbor.int_tuple], neighbor) not in heap_queue:
-                            heappush(heap_queue, (f_score[neighbor.int_tuple], neighbor.int_tuple))
+            for neighbor in self.get_tile_neighbors(Vec2d(current)):
+                neighbor = neighbor.int_tuple
+                # the cost from start to neighbor through current
+                # (since every edge has the same value we add a constant 1,
+                # except metal boxes that have an edge cost of 6)
+                if self.currentmap.boxAt(neighbor[0], neighbor[1]) == 3:
+                    tentative_g_score = g_score[current] + 6
+                else:    
+                    tentative_g_score = g_score[current] + 1
+                # This path to neighbor has a lower cost than any previous one
+                # (a node that hasn't been discovered yet has a g score of inf)
+                if tentative_g_score < g_score[neighbor]:
+                    # values for the neighbor are created
+                    came_from[neighbor] = current
+                    g_score[neighbor] = tentative_g_score
+                    f_score[neighbor] = tentative_g_score + self.heuristic(Vec2d(neighbor))
+                    
+                    if (f_score[neighbor], neighbor) not in heap_queue:
+                        heappush(heap_queue, (f_score[neighbor], neighbor))
 
         # If the algorithm fails to find a path it returns an empty deque
         return deque()
