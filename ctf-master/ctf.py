@@ -179,16 +179,18 @@ for x in range(0, current_map.width):
 
 
 #-- Create the boxes
-for x in range(0, current_map.width):
-    for y in range(0,  current_map.height):
-        # Get the type of boxes
-        box_type  = current_map.boxAt(x, y)
-        # If the box type is not 0 (aka grass tile), create a box
-        if(box_type != 0):
-            # Create a "Box" using the box_type, aswell as the x,y coordinates,
-            # and the pymunk space
-            box = gameobjects.get_box_with_type(x, y, box_type, space)
-            game_objects_list.append(box)
+def create_boxes():
+    for x in range(0, current_map.width):
+        for y in range(0,  current_map.height):
+            # Get the type of boxes
+            box_type  = current_map.boxAt(x, y)
+            # If the box type is not 0 (aka grass tile), create a box
+            if(box_type != 0):
+                # Create a "Box" using the box_type, aswell as the x,y coordinates,
+                # and the pymunk space
+                box = gameobjects.get_box_with_type(x, y, box_type, space)
+                game_objects_list.append(box)
+create_boxes()
 
 #-- Create the flag
 flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
@@ -397,7 +399,15 @@ while running:
                     gameobjects.Tank.respawn(tank)
                     print(f"Player {index + 1}: {gameobjects.Tank.get_score(tank)}")
                 print()
-                #Restart the main loop
+                for box in game_objects_list:
+                    # Find a wooden or iron box
+                    if type(box) == gameobjects.Box and \
+                    getattr(box, 'movable') == True:
+                        # remove it from list and space
+                        game_objects_list.remove(box)
+                        space.remove(box.shape, box.body)
+                # create new ones
+                create_boxes()
                 continue
                 
                 #running = False

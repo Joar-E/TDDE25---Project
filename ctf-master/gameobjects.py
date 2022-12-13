@@ -318,6 +318,7 @@ class Box(GamePhysicsObject):
         self.y = y
         self.destructable = destructable
         self.collision_type = collision_type
+        self.movable = movable
         
 
 def get_box_with_type(x, y, type, space):
