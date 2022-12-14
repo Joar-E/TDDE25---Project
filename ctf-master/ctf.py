@@ -386,24 +386,24 @@ while running:
         tank_ai.decide()
 
     for tank in tanks_list:
-            gameobjects.Tank.try_grab_flag(tank, flag)
+            tank.try_grab_flag(flag)
             if tank.has_won():
                 # Add 1 to it's score
-                gameobjects.Tank.update_score(tank)
+                tank.update_score()
                 # Remove the flag
-                gameobjects.Tank.drop_flag(tank, flag)
+                tank.drop_flag(flag)
                 # Relocate the flag
                 flag.x = current_map.flag_position[0]
                 flag.y = current_map.flag_position[1]
                 # Respawn each tank and show their scores
                 for index, tank in enumerate(tanks_list):
-                    gameobjects.Tank.respawn(tank)
-                    print(f"Player {index + 1}: {gameobjects.Tank.get_score(tank)}")
+                    tank.respawn()
+                    print(f"Player {index + 1}: {tank.get_score()}")
                 print()
                 for box in game_objects_list:
                     # Find a wooden or iron box
                     if type(box) == gameobjects.Box and \
-                    getattr(box, 'movable') == True:
+                    box.movable == True:
                         # remove it from list and space
                         game_objects_list.remove(box)
                         space.remove(box.shape, box.body)
