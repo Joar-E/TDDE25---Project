@@ -328,6 +328,7 @@ def collision_bullet_tank(arb, space, data):
             play_explosion_anim(bullet_shape.parent)
             # If the tank has 0 hp respawn it
             if gameobjects.Tank.get_hit_points(tank) == 0:
+                sounds.tank_shot_sound.play()
                 gameobjects.Tank.respawn(tank)
                 gameobjects.Tank.drop_flag(tank, flag)
 

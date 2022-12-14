@@ -251,7 +251,7 @@ class Tank(GamePhysicsObject):
 
     def respawn(self):
         """ Called if the tank has died and returns it to its base """
-        sounds.tank_shot_sound.play()
+        
         self.flag = None
         self.body.position = self.start_position 
         self.body.angle = math.radians(self.orientation)
