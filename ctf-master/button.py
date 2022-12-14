@@ -18,9 +18,12 @@ class Button():
         #check mouseover and clicked conditions
         if self.rect.collidepoint(pos):
             self.current_color = self.button_hover_color
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
-                action = True
+            #if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.clicked = True
+                        action = True
         else:
             self.current_color = self.button_color
 

@@ -59,7 +59,7 @@ menu = True
 current_mode = "Multiplayer"
 
 #   Define the current level
-current_map         = maps.map0
+current_map         = maps.map1
 #   List of all game objects
 game_objects_list   = []
 tanks_list          = []
@@ -90,9 +90,10 @@ b_hover_color = (40, 40, 40)
 play_button = button.Button(100, 50, width/2, 50, button_color, b_hover_color)
 game_mode_button = button.Button(100, 50, width/2, 150, button_color, b_hover_color)
 quit_button = button.Button(100, 50, width/2, 250, button_color, b_hover_color)
-back_button = button.Button(100, 50, width/2, height/2, button_color, b_hover_color)
+back_button = button.Button(100, 50, width/2, 250, button_color, b_hover_color)
 single_player_button = button.Button(100, 50, width/3, 100, button_color, b_hover_color)
 hot_seat_mult_button = button.Button(100, 50, width*2/3, 100, button_color, b_hover_color)
+map_button = button.Button(100, 50, width/2, 250, button_color, b_hover_color)
 
 #Creates a start menu
 # start_menu = True
