@@ -386,8 +386,8 @@ box_c_handler.pre_solve = collision_bullet_box
 #-- Control whether the game run
 
 while running:
-    #for tank_ai in ai_list:
-    #    tank_ai.decide()
+    for tank_ai in ai_list:
+        tank_ai.decide()
 
     for tank in tanks_list:
             tank.try_grab_flag(flag)
