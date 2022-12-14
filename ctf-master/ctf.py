@@ -52,7 +52,11 @@ MULTIPLAYER= False
 #COOLDOWN_FOR_BULLET = 0
 
 #-- Variables
-
+running = False
+game_mode_menu = False
+start_menu = True
+menu = True
+current_mode = "Multiplayer"
 
 #   Define the current level
 current_map         = maps.map0
@@ -68,10 +72,14 @@ screen = pygame.display.set_mode(current_map.rect().size)
 #-- Creating and rendering fonts
 width = screen.get_width()
 height = screen.get_height()
-font = pygame.font.SysFont("arialblack", 20)
+font = pygame.font.SysFont("arialblack", 25)
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
+dark_red = (90, 0, 0)
+menu_color = (110, 110, 110)
+button_color = (70, 70, 70)
+b_hover_color = (40, 40, 40)
 # smallfont = pygame.font.SysFont('Open Sans',34)
 # smallerfont = pygame.font.SysFont('Open Sans',32)
 # start_text = smallfont.render('Start game' , True , (255, 255, 255))
@@ -79,12 +87,12 @@ red = (255, 0, 0)
 # quit_text = smallfont.render('Quit', True, (255,255,255))
 # pygame.display.set_caption("Start Menu")
 
-play_button = button.Button(100, 50, width/2, 50)
-game_mode_button = button.Button(100, 50, width/2, 150)
-quit_button = button.Button(100, 50, width/2, 250)
-back_button = button.Button(100, 50, width/2, height/2)
-single_player_button = button.Button(100, 50, width/3, 100)
-hot_seat_mult_button = button.Button(100, 50, width*2/3, 100)
+play_button = button.Button(100, 50, width/2, 50, button_color, b_hover_color)
+game_mode_button = button.Button(100, 50, width/2, 150, button_color, b_hover_color)
+quit_button = button.Button(100, 50, width/2, 250, button_color, b_hover_color)
+back_button = button.Button(100, 50, width/2, height/2, button_color, b_hover_color)
+single_player_button = button.Button(100, 50, width/3, 100, button_color, b_hover_color)
+hot_seat_mult_button = button.Button(100, 50, width*2/3, 100, button_color, b_hover_color)
 
 #Creates a start menu
 # start_menu = True
@@ -106,26 +114,32 @@ hot_seat_mult_button = button.Button(100, 50, width*2/3, 100)
 #             pygame.mixer.music.play(-1)
 #             pygame.display.set_caption("Capture The Flag")
 #             running = True
-running = False
-game_mode_menu = False
-start_menu = True
-menu = True
-while menu:
-    while start_menu:
-        pygame.display.set_caption("Main menu")
-        screen.fill(black)
 
-        if play_button.draw(screen, red, "Play", font, white):
+
+
+while menu:
+    if start_menu:
+        pygame.display.set_caption("Main menu")
+        screen.fill(menu_color)
+
+        play_button.draw(screen, "Play", font, white)
+        game_mode_button.draw(screen, "Game mode", font, white)
+        quit_button.draw(screen, "Quit", font, white)
+
+        if play_button.click():
             start_menu = False
             menu = False
             pygame.display.set_caption("Capture The Flag")
             running = True
-        if game_mode_button.draw(screen, red, "Game mode", font, white):
+
+        if game_mode_button.click():
             start_menu = False
             game_mode_menu = True
-        if quit_button.draw(screen, red, "Quit", font, white):
+
+        if quit_button.click():
             pygame.quit()
             sys.exit()
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -134,20 +148,35 @@ while menu:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-        pygame.display.update()    
-        main_clock.tick(60)
 
-    while game_mode_menu:
+        # pygame.display.update()    
+        # main_clock.tick(60)
+
+    if game_mode_menu:
         pygame.display.set_caption("Main menu")
-        screen.fill(black)
+        screen.fill(menu_color)
 
-        if single_player_button.draw(screen, red, "Single Player", font, white):
+        single_player_button.draw(screen, "1 player", font, white)
+        hot_seat_mult_button.draw(screen, "2 players", font, white)
+        back_button.draw(screen, "Back", font, white)
+
+        # textobject = font.render(f"Current mode: {current_mode}", 1, white)
+        # textrect = textobject.get_rect()
+        # textrect.center = (width/2, height - 20)
+        # screen.blit(textobject, textrect)
+        button.Button.write_text(screen, f"Current mode: {current_mode}", font, white, width/2, height - 20)
+
+        if single_player_button.click():
             SINGLEPLAYER = True
             MULTIPLAYER = False
-        if hot_seat_mult_button.draw(screen, red, "2 players", font, white):
+            current_mode = "Single Player"
+
+        if hot_seat_mult_button.click():
             MULTIPLAYER = True
             SINGLEPLAYER = False
-        if back_button.draw(screen, red, "Back", font, white):
+            current_mode = "Multiplayer"
+
+        if back_button.click():
             start_menu = True
             game_mode_menu = False
         
@@ -159,8 +188,9 @@ while menu:
                 if event.key == K_ESCAPE:
                     game_mode_menu = False
                     start_menu = True
-        pygame.display.update()    
-        main_clock.tick(60)
+
+    pygame.display.update()    
+    main_clock.tick(FRAMERATE)
 
 # Provided no arguments the default mode is multiplayer
 if not SINGLEPLAYER or MULTIPLAYER:
