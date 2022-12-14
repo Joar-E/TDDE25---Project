@@ -324,13 +324,13 @@ def collision_bullet_tank(arb, space, data):
             space.remove(bullet_shape, bullet_shape.body)
             game_objects_list.remove(bullet_shape.parent)
             # Remove 1 hp from the tank
-            gameobjects.Tank.decrease_hp(tank)
+            tank.decrease_hp()
             play_explosion_anim(bullet_shape.parent)
             # If the tank has 0 hp respawn it
-            if gameobjects.Tank.get_hit_points(tank) == 0:
+            if tank.get_hit_points() == 0:
                 sounds.tank_shot_sound.play()
-                gameobjects.Tank.respawn(tank)
-                gameobjects.Tank.drop_flag(tank, flag)
+                tank.respawn()
+                tank.drop_flag(flag)
 
     return False
 
