@@ -388,6 +388,7 @@ while running:
     for tank in tanks_list:
             tank.try_grab_flag(flag)
             if tank.has_won():
+                sounds.victory_sound.play()
                 # Add 1 to it's score
                 tank.update_score()
                 # Remove the flag
