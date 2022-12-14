@@ -353,14 +353,19 @@ def collision_bullet_tank(arb, space, data):
         if bullet_shape.parent in game_objects_list:
             space.remove(bullet_shape, bullet_shape.body)
             game_objects_list.remove(bullet_shape.parent)
-            # Remove 1 hp from the tank
-            gameobjects.Tank.decrease_hp(tank)
             play_explosion_anim(bullet_shape.parent)
-            # If the tank has 0 hp respawn it
-            if gameobjects.Tank.get_hit_points(tank) == 0:
-                sounds.tank_shot_sound.play()
-                gameobjects.Tank.respawn(tank)
-                gameobjects.Tank.drop_flag(tank, flag)
+            # If 2000 ticks have passed since tak respawn
+            # check tank hit points
+            if pygame.time.get_ticks() - tank.get_respawn_time() > 2500:
+                # Remove 1 hp from the tank
+                tank.decrease_hp()
+                # If the tank has 0 hp respawn it
+                if tank.get_hit_points() == 0:
+                    # Save time of death
+                    tank.set_respawn_time(pygame.time.get_ticks())
+                    sounds.tank_shot_sound.play()
+                    tank.respawn()
+                    tank.drop_flag(flag)
 
     return False
 
@@ -411,29 +416,29 @@ box_c_handler.pre_solve = collision_bullet_box
 #-- Control whether the game run
 
 while running:
-    
     for tank_ai in ai_list:
         tank_ai.decide()
 
     for tank in tanks_list:
-            gameobjects.Tank.try_grab_flag(tank, flag)
+            tank.try_grab_flag(flag)
             if tank.has_won():
+                sounds.victory_sound.play()
                 # Add 1 to it's score
-                gameobjects.Tank.update_score(tank)
+                tank.update_score()
                 # Remove the flag
-                gameobjects.Tank.drop_flag(tank, flag)
+                tank.drop_flag(flag)
                 # Relocate the flag
                 flag.x = current_map.flag_position[0]
                 flag.y = current_map.flag_position[1]
                 # Respawn each tank and show their scores
                 for index, tank in enumerate(tanks_list):
-                    gameobjects.Tank.respawn(tank)
-                    print(f"Player {index + 1}: {gameobjects.Tank.get_score(tank)}")
+                    tank.respawn()
+                    print(f"Player {index + 1}: {tank.get_score()}")
                 print()
                 for box in game_objects_list:
                     # Find a wooden or iron box
                     if type(box) == gameobjects.Box and \
-                    getattr(box, 'movable') == True:
+                    box.movable == True:
                         # remove it from list and space
                         game_objects_list.remove(box)
                         space.remove(box.shape, box.body)

@@ -26,6 +26,7 @@ background_music = load_sound("background_music.wav")
 
 tank_shot_sound = load_sound("tank_shot_sound.wav")
 
+victory_sound = load_sound("victory_sound.wav")
 
 
 

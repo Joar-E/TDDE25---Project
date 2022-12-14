@@ -152,6 +152,7 @@ class Tank(GamePhysicsObject):
         self.collision_type = 2
         self.score = 0
         self.hit_points = 2
+        self.respawn_time = 0
         
 
     def accelerate(self):
@@ -282,6 +283,14 @@ class Tank(GamePhysicsObject):
     def reset_hit_points(self):
         """Give a tank full hp"""
         self.hit_points = 2
+    
+    def set_respawn_time(self, tick):
+        """Saving tick of tank death"""
+        self.respawn_time = tick
+    
+    def get_respawn_time(self):
+        """Used to get respawn time of tank"""
+        return self.respawn_time
     
     
         
