@@ -323,14 +323,19 @@ def collision_bullet_tank(arb, space, data):
         if bullet_shape.parent in game_objects_list:
             space.remove(bullet_shape, bullet_shape.body)
             game_objects_list.remove(bullet_shape.parent)
-            # Remove 1 hp from the tank
-            tank.decrease_hp()
             play_explosion_anim(bullet_shape.parent)
-            # If the tank has 0 hp respawn it
-            if tank.get_hit_points() == 0:
-                sounds.tank_shot_sound.play()
-                tank.respawn()
-                tank.drop_flag(flag)
+            # If 2000 ticks have passed since tak respawn
+            # check tank hit points
+            if pygame.time.get_ticks() - tank.get_respawn_time() > 2500:
+                # Remove 1 hp from the tank
+                tank.decrease_hp()
+                # If the tank has 0 hp respawn it
+                if tank.get_hit_points() == 0:
+                    # Save time of death
+                    tank.set_respawn_time(pygame.time.get_ticks())
+                    sounds.tank_shot_sound.play()
+                    tank.respawn()
+                    tank.drop_flag(flag)
 
     return False
 
@@ -381,9 +386,8 @@ box_c_handler.pre_solve = collision_bullet_box
 #-- Control whether the game run
 
 while running:
-    
-    for tank_ai in ai_list:
-        tank_ai.decide()
+    #for tank_ai in ai_list:
+    #    tank_ai.decide()
 
     for tank in tanks_list:
             tank.try_grab_flag(flag)
