@@ -80,7 +80,7 @@ b_hover_colour = (40, 40, 40)
 
 #--Start menu
 play_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
-settings_button = button.Button(200, 100, width/2, height/2, button_colour, b_hover_colour)
+settings_button = button.Button(250, 100, width/2, height/2, button_colour, b_hover_colour)
 quit_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
 
 #--Settings menu
