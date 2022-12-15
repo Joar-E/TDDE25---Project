@@ -14,15 +14,6 @@ import button
 #-- Initialise the display
 pygame.init()
 
-#width, height = pygame.display.get_surface().get_size()
-pos_x = int(pygame.display.get_desktop_sizes()[0][0]/2 - 200)#- (width/2))
-pos_y = int(pygame.display.get_desktop_sizes()[0][1]/2 - 200)#- (height/2))
-def dynamicwinpos(x = pos_x, y = pos_y):
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
-
-
-
-dynamicwinpos()
 pygame.display.set_mode()
 
 #-- Initialise the clock
@@ -79,31 +70,32 @@ width = menu_screen.get_width()
 height = menu_screen.get_height()
 font = pygame.font.SysFont("arialblack", 50)
 white = (255, 255, 255)
-black = (0, 0, 0)
-red = (255, 0, 0)
-dark_red = (90, 0, 0)
-menu_color = (40, 40, 40)
-button_color = (90, 90, 90)
-b_hover_color = (70, 70, 70)
+menu_color = (60, 60, 60)
+button_color = (120, 120, 120)
+b_hover_color = (80, 80, 80)
 
 
 
 #Creates the buttons
+
+#--Start menu
 play_button = button.Button(200, 100, width/2, height/4, button_color, b_hover_color)
 settings_button = button.Button(200, 100, width/2, height/2, button_color, b_hover_color)
 quit_button = button.Button(200, 100, width/2, height*3/4, button_color, b_hover_color)
 
+#--Settings menu
 game_mode_button = button.Button(300, 100, width/2, height/2, button_color, b_hover_color)
 map_button = button.Button(300, 100, width/2, height/4, button_color, b_hover_color)
 back_button = button.Button(200, 100, width/2, height*3/4, button_color, b_hover_color)
 
+#--GameMode menu
 single_player_button = button.Button(300, 100, width/3, height/4, button_color, b_hover_color)
 hot_seat_mult_button = button.Button(300, 100, width*2/3, height/4, button_color, b_hover_color)
 
+#--Map menu
 map1_button = button.Button(200, 100, width/4, height/4, button_color, b_hover_color)
 map2_button = button.Button(200, 100, width/2, height/4, button_color, b_hover_color)
 map3_button = button.Button(200, 100, width*3/4, height/4, button_color, b_hover_color)
-
 
 
 #Creates a start menu
@@ -141,8 +133,6 @@ while menu:
                     pygame.quit()
                     sys.exit()
 
-        # pygame.display.update()    
-        # main_clock.tick(60)
     
     if settings_menu:
         pygame.display.set_caption("Settings")
@@ -217,6 +207,9 @@ while menu:
         back_button.draw(menu_screen, "Back", font, white)
 
         button.Button.write_text(menu_screen, f"Current mode: {current_map_string}", font, white, width/2, height/2)
+        button.Button.write_text(menu_screen, "9X9", font, white, width/4, height/4 + 100)
+        button.Button.write_text(menu_screen, "15X11", font, white, width/2, height/4 + 100)
+        button.Button.write_text(menu_screen, "10X5", font, white, width*3/4, height/4 + 100)
 
         if map1_button.click():
             current_map = maps.map0
