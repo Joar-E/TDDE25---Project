@@ -72,7 +72,7 @@ font = pygame.font.SysFont("arialblack", 50)
 white = (255, 255, 255)
 menu_colour = (60, 60, 60)
 button_colour = (120, 120, 120)
-b_hover_colour = (80, 80, 80)
+b_hover_colour = (40, 40, 40)
 
 
 
