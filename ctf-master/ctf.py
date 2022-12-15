@@ -70,32 +70,32 @@ width = menu_screen.get_width()
 height = menu_screen.get_height()
 font = pygame.font.SysFont("arialblack", 50)
 white = (255, 255, 255)
-menu_color = (60, 60, 60)
-button_color = (120, 120, 120)
-b_hover_color = (80, 80, 80)
+menu_colour = (60, 60, 60)
+button_colour = (120, 120, 120)
+b_hover_colour = (80, 80, 80)
 
 
 
 #Creates the buttons
 
 #--Start menu
-play_button = button.Button(200, 100, width/2, height/4, button_color, b_hover_color)
-settings_button = button.Button(200, 100, width/2, height/2, button_color, b_hover_color)
-quit_button = button.Button(200, 100, width/2, height*3/4, button_color, b_hover_color)
+play_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
+settings_button = button.Button(200, 100, width/2, height/2, button_colour, b_hover_colour)
+quit_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
 
 #--Settings menu
-game_mode_button = button.Button(300, 100, width/2, height/2, button_color, b_hover_color)
-map_button = button.Button(300, 100, width/2, height/4, button_color, b_hover_color)
-back_button = button.Button(200, 100, width/2, height*3/4, button_color, b_hover_color)
+game_mode_button = button.Button(300, 100, width/2, height/2, button_colour, b_hover_colour)
+map_button = button.Button(300, 100, width/2, height/4, button_colour, b_hover_colour)
+back_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
 
 #--GameMode menu
-single_player_button = button.Button(300, 100, width/3, height/4, button_color, b_hover_color)
-hot_seat_mult_button = button.Button(300, 100, width*2/3, height/4, button_color, b_hover_color)
+single_player_button = button.Button(300, 100, width/3, height/4, button_colour, b_hover_colour)
+hot_seat_mult_button = button.Button(300, 100, width*2/3, height/4, button_colour, b_hover_colour)
 
 #--Map menu
-map1_button = button.Button(200, 100, width/4, height/4, button_color, b_hover_color)
-map2_button = button.Button(200, 100, width/2, height/4, button_color, b_hover_color)
-map3_button = button.Button(200, 100, width*3/4, height/4, button_color, b_hover_color)
+map1_button = button.Button(200, 100, width/4, height/4, button_colour, b_hover_colour)
+map2_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
+map3_button = button.Button(200, 100, width*3/4, height/4, button_colour, b_hover_colour)
 
 
 #Creates a start menu
@@ -103,14 +103,14 @@ map3_button = button.Button(200, 100, width*3/4, height/4, button_color, b_hover
 while menu:
     if start_menu:
         pygame.display.set_caption("Main menu")
-        menu_screen.fill(menu_color)
+        menu_screen.fill(menu_colour)
 
         play_button.draw(menu_screen, "Play", font, white)
         settings_button.draw(menu_screen, "Settings", font, white)
         quit_button.draw(menu_screen, "Quit", font, white)
 
         if play_button.click():
-            menu_screen.fill(menu_color)
+            menu_screen.fill(menu_colour)
             start_menu = False
             menu = False
             pygame.display.set_caption("Capture The Flag")
@@ -136,7 +136,7 @@ while menu:
     
     if settings_menu:
         pygame.display.set_caption("Settings")
-        menu_screen.fill(menu_color)
+        menu_screen.fill(menu_colour)
 
         game_mode_button.draw(menu_screen, "Game Modes", font, white)
         map_button.draw(menu_screen, "Map Selection", font, white)
@@ -166,7 +166,7 @@ while menu:
 
     if game_mode_menu:
         pygame.display.set_caption("Game-mode menu")
-        menu_screen.fill(menu_color)
+        menu_screen.fill(menu_colour)
 
         single_player_button.draw(menu_screen, "Singleplayer", font, white)
         hot_seat_mult_button.draw(menu_screen, "Multiplayer", font, white)
@@ -199,7 +199,7 @@ while menu:
     
     if map_menu:
         pygame.display.set_caption("Map Selection")
-        menu_screen.fill(menu_color)
+        menu_screen.fill(menu_colour)
 
         map1_button.draw(menu_screen, "Map 1", font, white)
         map2_button.draw(menu_screen, "Map 2", font, white)
