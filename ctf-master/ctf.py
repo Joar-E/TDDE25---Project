@@ -37,6 +37,7 @@ main_clock = pygame.time.Clock()
 
 #-- Constants
 FRAMERATE = 50
+SCREEN_RESOLUTION = (1360, 768)
 # These are later assigned a constant value
 SINGLEPLAYER = False
 MULTIPLAYER= False
@@ -80,17 +81,17 @@ b_hover_colour = (40, 40, 40)
 
 #--Start menu
 play_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
-settings_button = button.Button(250, 100, width/2, height/2, button_colour, b_hover_colour)
+settings_button = button.Button(300, 100, width/2, height/2, button_colour, b_hover_colour)
 quit_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
 
 #--Settings menu
-game_mode_button = button.Button(300, 100, width/2, height/2, button_colour, b_hover_colour)
-map_button = button.Button(300, 100, width/2, height/4, button_colour, b_hover_colour)
+game_mode_button = button.Button(400, 100, width/2, height/2, button_colour, b_hover_colour)
+map_button = button.Button(450, 100, width/2, height/4, button_colour, b_hover_colour)
 back_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
 
 #--GameMode menu
-single_player_button = button.Button(300, 100, width/3, height/4, button_colour, b_hover_colour)
-hot_seat_mult_button = button.Button(300, 100, width*2/3, height/4, button_colour, b_hover_colour)
+single_player_button = button.Button(400, 100, width/3, height/4, button_colour, b_hover_colour)
+hot_seat_mult_button = button.Button(400, 100, width*2/3, height/4, button_colour, b_hover_colour)
 
 #--Map menu
 map1_button = button.Button(200, 100, width/4, height/4, button_colour, b_hover_colour)
