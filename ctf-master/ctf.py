@@ -206,7 +206,7 @@ while menu:
         map3_button.draw(menu_screen, "Map 3", font, white)
         back_button.draw(menu_screen, "Back", font, white)
 
-        button.Button.write_text(menu_screen, f"Current mode: {current_map_string}", font, white, width/2, height/2)
+        button.Button.write_text(menu_screen, f"Current map: {current_map_string}", font, white, width/2, height/2)
         button.Button.write_text(menu_screen, "9X9", font, white, width/4, height/4 + 100)
         button.Button.write_text(menu_screen, "15X11", font, white, width/2, height/4 + 100)
         button.Button.write_text(menu_screen, "10X5", font, white, width*3/4, height/4 + 100)
