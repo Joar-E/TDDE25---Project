@@ -52,14 +52,17 @@ MULTIPLAYER= False
 #COOLDOWN_FOR_BULLET = 0
 
 #-- Variables
-running = False
-game_mode_menu = False
-start_menu = True
 menu = True
+start_menu = True
+settings_menu = False
+game_mode_menu = False
+map_menu = False
+running = False
 current_mode = "Multiplayer"
+current_map_string = "Map 1"
 
 #   Define the current level
-current_map         = maps.map1
+current_map         = maps.map0
 #   List of all game objects
 game_objects_list   = []
 tanks_list          = []
@@ -67,12 +70,14 @@ ai_list             = []
 
 
 #-- Resize the screen to the size of the current level
-screen = pygame.display.set_mode(current_map.rect().size)
+menu_screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)#(current_map.rect().size)
+screen = pygame.Surface(current_map.rect().size)
+screen_offset = tuple([(x[0]-x[1])/2 for x in zip( menu_screen.get_size(), screen.get_size() )])
 
-#-- Creating and rendering fonts
-width = screen.get_width()
-height = screen.get_height()
-font = pygame.font.SysFont("arialblack", 25)
+#-- Creating and rendering fonts and colours
+width = menu_screen.get_width()
+height = menu_screen.get_height()
+font = pygame.font.SysFont("arialblack", 50)
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
@@ -80,62 +85,48 @@ dark_red = (90, 0, 0)
 menu_color = (110, 110, 110)
 button_color = (70, 70, 70)
 b_hover_color = (40, 40, 40)
-# smallfont = pygame.font.SysFont('Open Sans',34)
-# smallerfont = pygame.font.SysFont('Open Sans',32)
-# start_text = smallfont.render('Start game' , True , (255, 255, 255))
-# game_mode_text = smallerfont.render('Gamemode', True, (255,255,255))
-# quit_text = smallfont.render('Quit', True, (255,255,255))
-# pygame.display.set_caption("Start Menu")
 
-play_button = button.Button(100, 50, width/2, 50, button_color, b_hover_color)
-game_mode_button = button.Button(100, 50, width/2, 150, button_color, b_hover_color)
-quit_button = button.Button(100, 50, width/2, 250, button_color, b_hover_color)
-back_button = button.Button(100, 50, width/2, 250, button_color, b_hover_color)
-single_player_button = button.Button(100, 50, width/3, 100, button_color, b_hover_color)
-hot_seat_mult_button = button.Button(100, 50, width*2/3, 100, button_color, b_hover_color)
-map_button = button.Button(100, 50, width/2, 250, button_color, b_hover_color)
+
+
+#Creates the buttons
+play_button = button.Button(200, 100, width/2, height/4, button_color, b_hover_color)
+settings_button = button.Button(200, 100, width/2, height/2, button_color, b_hover_color)
+quit_button = button.Button(200, 100, width/2, height*3/4, button_color, b_hover_color)
+
+game_mode_button = button.Button(300, 100, width/2, height/2, button_color, b_hover_color)
+map_button = button.Button(300, 100, width/2, height/4, button_color, b_hover_color)
+back_button = button.Button(200, 100, width/2, height*3/4, button_color, b_hover_color)
+
+single_player_button = button.Button(300, 100, width/3, height/4, button_color, b_hover_color)
+hot_seat_mult_button = button.Button(300, 100, width*2/3, height/4, button_color, b_hover_color)
+
+map1_button = button.Button(200, 100, width/4, height/4, button_color, b_hover_color)
+map2_button = button.Button(200, 100, width/2, height/4, button_color, b_hover_color)
+map3_button = button.Button(200, 100, width*3/4, height/4, button_color, b_hover_color)
+
+
 
 #Creates a start menu
-# start_menu = True
-# while start_menu:
-    
-#     screen.fill((255, 255, 255))
-#     pygame.draw.rect(screen, (10,10,10),[width/4,height/4,width/2,height/7])
-#     pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 65 ,width/2,height/7])
-#     pygame.draw.rect(screen, (10,10,10),[width/4,(height/4) + 130 ,width/2,height/7])
-#     screen.blit(start_text , (width/4,height/4)) 
-#     screen.blit(game_mode_text , (width/4,height/4 + 65)) 
-#     screen.blit(quit_text , ((width/4) + 50,height/4 + 130)) 
-#     pygame.display.update()
-#     for event in pygame.event.get():
-#         if event.type == QUIT:
-#             pygame.quit()
-#         if (event.type == KEYDOWN and event.key == K_ESCAPE) or event.type == pygame.MOUSEBUTTONDOWN:
-#             start_menu = False
-#             pygame.mixer.music.play(-1)
-#             pygame.display.set_caption("Capture The Flag")
-#             running = True
-
-
 
 while menu:
     if start_menu:
         pygame.display.set_caption("Main menu")
-        screen.fill(menu_color)
+        menu_screen.fill(menu_color)
 
-        play_button.draw(screen, "Play", font, white)
-        game_mode_button.draw(screen, "Game mode", font, white)
-        quit_button.draw(screen, "Quit", font, white)
+        play_button.draw(menu_screen, "Play", font, white)
+        settings_button.draw(menu_screen, "Settings", font, white)
+        quit_button.draw(menu_screen, "Quit", font, white)
 
         if play_button.click():
+            menu_screen.fill(menu_color)
             start_menu = False
             menu = False
             pygame.display.set_caption("Capture The Flag")
             running = True
 
-        if game_mode_button.click():
+        if settings_button.click():
             start_menu = False
-            game_mode_menu = True
+            settings_menu = True
 
         if quit_button.click():
             pygame.quit()
@@ -152,21 +143,47 @@ while menu:
 
         # pygame.display.update()    
         # main_clock.tick(60)
+    
+    if settings_menu:
+        pygame.display.set_caption("Settings")
+        menu_screen.fill(menu_color)
+
+        game_mode_button.draw(menu_screen, "Game Modes", font, white)
+        map_button.draw(menu_screen, "Map Selection", font, white)
+        back_button.draw(menu_screen, "Back", font, white)
+
+        if game_mode_button.click():
+            settings_menu = False
+            game_mode_menu = True
+        
+        if map_button.click():
+            settings_menu = False
+            map_menu = True
+        
+        if back_button.click():
+            settings_menu = False
+            start_menu = True
+        
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    settings_menu = False
+                    start_menu_menu = True
+
 
     if game_mode_menu:
-        pygame.display.set_caption("Main menu")
-        screen.fill(menu_color)
+        pygame.display.set_caption("Game-mode menu")
+        menu_screen.fill(menu_color)
 
-        single_player_button.draw(screen, "1 player", font, white)
-        hot_seat_mult_button.draw(screen, "2 players", font, white)
-        back_button.draw(screen, "Back", font, white)
+        single_player_button.draw(menu_screen, "Singleplayer", font, white)
+        hot_seat_mult_button.draw(menu_screen, "Multiplayer", font, white)
+        back_button.draw(menu_screen, "Back", font, white)
 
-        # textobject = font.render(f"Current mode: {current_mode}", 1, white)
-        # textrect = textobject.get_rect()
-        # textrect.center = (width/2, height - 20)
-        # screen.blit(textobject, textrect)
-        button.Button.write_text(screen, f"Current mode: {current_mode}", font, white, width/2, height - 20)
-
+        button.Button.write_text(menu_screen, f"Current mode: {current_mode}", font, white, width/2, height/2)
+        
         if single_player_button.click():
             SINGLEPLAYER = True
             MULTIPLAYER = False
@@ -178,7 +195,7 @@ while menu:
             current_mode = "Multiplayer"
 
         if back_button.click():
-            start_menu = True
+            settings_menu = True
             game_mode_menu = False
         
         for event in pygame.event.get():
@@ -188,7 +205,50 @@ while menu:
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     game_mode_menu = False
-                    start_menu = True
+                    settings_menu = True
+    
+    if map_menu:
+        pygame.display.set_caption("Map Selection")
+        menu_screen.fill(menu_color)
+
+        map1_button.draw(menu_screen, "Map 1", font, white)
+        map2_button.draw(menu_screen, "Map 2", font, white)
+        map3_button.draw(menu_screen, "Map 3", font, white)
+        back_button.draw(menu_screen, "Back", font, white)
+
+        button.Button.write_text(menu_screen, f"Current mode: {current_map_string}", font, white, width/2, height/2)
+
+        if map1_button.click():
+            current_map = maps.map0
+            current_map_string = "Map 1"
+            screen = pygame.Surface(current_map.rect().size)
+            screen_offset = tuple([(x[0]-x[1])/2 for x in zip( menu_screen.get_size(), screen.get_size() )])
+
+        if map2_button.click():
+            current_map = maps.map1
+            current_map_string = "Map 2"
+            screen = pygame.Surface(current_map.rect().size)
+            screen_offset = tuple([(x[0]-x[1])/2 for x in zip( menu_screen.get_size(), screen.get_size() )])
+
+        if map3_button.click():
+            current_map = maps.map2
+            current_map_string = "Map 3"
+            screen = pygame.Surface(current_map.rect().size)
+            screen_offset = tuple([(x[0]-x[1])/2 for x in zip( menu_screen.get_size(), screen.get_size() )])
+        
+        if back_button.click():
+            settings_menu = True
+            map_menu = False
+        
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    map_menu = False
+                    settings_menu = True
+
 
     pygame.display.update()    
     main_clock.tick(FRAMERATE)
@@ -412,11 +472,13 @@ box_c_handler.pre_solve = collision_bullet_box
 #----- Main Loop -----#
 
 
-
+x = (menu_screen.get_width() - screen.get_width())/2
+y = (menu_screen.get_height() - screen.get_height())/2
 
 #-- Control whether the game run
 
 while running:
+    
     for tank_ai in ai_list:
         tank_ai.decide()
 
@@ -496,6 +558,7 @@ while running:
 
     flag.update_screen(screen)
     
+    menu_screen.blit(screen, screen_offset)
     
     #   Redisplay the entire screen (see double buffer technique)
     pygame.display.flip()
