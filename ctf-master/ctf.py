@@ -82,9 +82,9 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
 dark_red = (90, 0, 0)
-menu_color = (110, 110, 110)
-button_color = (70, 70, 70)
-b_hover_color = (40, 40, 40)
+menu_color = (40, 40, 40)
+button_color = (90, 90, 90)
+b_hover_color = (70, 70, 70)
 
 
 
@@ -170,8 +170,8 @@ while menu:
                 sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    start_menu = True
                     settings_menu = False
-                    start_menu_menu = True
 
 
     if game_mode_menu:
@@ -246,8 +246,8 @@ while menu:
                 sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    map_menu = False
                     settings_menu = True
+                    map_menu = False
 
 
     pygame.display.update()    
