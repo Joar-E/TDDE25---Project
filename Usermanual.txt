@@ -15,3 +15,37 @@ Vi deklarerar också requirements till self.requirements som hjälper oss till n
 
 def print_description(self) ska hjälpa till att kunna kalla på Pc_Game på rätt sätt!
 """
+
+Implementerade features:
+
+Hur man startar spelet?
+
+Sound
+Ljudet loadas genom en separat fil sounds.py där varje ljud tilldelas en variabel så de går att komma åt från de andra filerna. 
+Ljudet som spelas då flaggan tas upp av en tank ligger i funktionen try_grab_flag, och ljudet spelas bara om tanken inte har den sänkta hastigheten som den senare får om den har flaggan, på så sätt  spelas ljudet bara en gång eftersom tanken senare får den långsammare hastigheten.
+Ljudet av att en tank skjuter spelas helt enkelt i shoot-funktionen.
+När en trälåda går sönder spelas också ett ljud, detta görs i collision handlern för bullet och box.
+Bakgrundsmusiken spelas inuti main-loopen.
+Ljudet av att en tank exploderar spelas i collision handlern för bullet och tank, men bara när tanken har nått 0 hp. 
+När en tank vinner spelas ett ljud under has_won inuti main-loopen. 
+
+Hot seat multiplayer
+För att kontrollera game mode finns två booleans/flaggor: singleplayer och multiplayer. Dessa ges ett värde i startmenyn och avgör hur många tanks som görs till AI och hur många spelare som läggs till i player_list.
+
+Hit points
+Varje tank har en attribut hit_points som standard är 2 men som sänks med 1 om en tank träffas av en bullet, och om den når 0 respawnar tanken. Detta sker i collision för bullet och tank.
+
+Respawn protection
+Om en tank når 0 hp sparas ticken när det hände i en attribut respawn_time, en tank kan därefter inte tappa hp om det inte har gått 2500 ticks efter dess respawn_time.
+
+Welcome screen / meny
+
+
+Explosions (animerade)
+
+
+A star search
+En snabbare sökalgoritm än BFS. Istället för att utforska alla noder samtidigt utan diskriminering så ges varje nod två värden/poäng: vad det kostar att komma till noden från begynnelsenoden genom den nuvarande kortaste kända vägen, och hur långt det är till målet från noden. Dessa värden slås ihop till ett värde som blir den totala poägen av en nod. När grafen utforskas prioriterar algoritmen alltid att först utforska de noder med låg poäng, på detta sätt har algoritmen en idé om rikting och kostnad av varje väg, och kan på så sätt ignorera vägar som inte är värda att utforska. En väg som t.ex leder i motsatt rikting av målet skulle väldigt sent, om än inte alls, utforskas. 
+
+
+Funktionalitet av varje fil:
