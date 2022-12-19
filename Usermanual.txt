@@ -19,6 +19,8 @@ def print_description(self) ska hjälpa till att kunna kalla på Pc_Game på rä
 Implementerade features:
 
 Hur man startar spelet?
+Se till att du har pygame och pymunk v.5.7.0 nedladdade till din dator. Navigera dig till ctf-master katalogen för att sedan köra ctf.py i terminalen genom att skriva "python3 ctf.py". Om du använder VScode kan du istället köra ctf.py filen direkt från VScode.
+
 
 Sound
 Ljudet loadas genom en separat fil sounds.py där varje ljud tilldelas en variabel så de går att komma åt från de andra filerna. 
@@ -39,7 +41,7 @@ Respawn protection
 Om en tank når 0 hp sparas ticken när det hände i en attribut respawn_time, en tank kan därefter inte tappa hp om det inte har gått 2500 ticks efter dess respawn_time.
 
 Welcome screen / meny
-
+När du startar spelet möts du av en meny som använderen kan navigera sig igenom med musen. I menyn kan du ändra karta och om du vill spela singleplayer eller multiplayer. ctf.py importerar filen button.py som skapar, ritar och hanterar knappar. Den kan även rita text på skärmen. Filen består av en klass Button vars __init__ funktion skapar knappen efter givna parametrar. click metoden hanterar om musen är inom knappens rektangel och ändrar då färg. Den returnar sedan True om du har klickat på knappen. Sedan har vi metoden draw som ritar ut knappen med given text centrerad i rektangeln. Till sist har vi metoden write_text som bara är tillför att skriva ut text på skärmen. 
 
 Explosions (animerade)
 
