@@ -47,7 +47,7 @@ Explosions (animerade)
 
 
 A star search
-En snabbare sökalgoritm än BFS. Istället för att utforska alla noder samtidigt utan diskriminering så ges varje nod två värden/poäng: vad det kostar att komma till noden från begynnelsenoden genom den nuvarande kortaste kända vägen, och hur långt det är till målet från noden. Dessa värden slås ihop till ett värde som blir den totala poägen av en nod. När grafen utforskas prioriterar algoritmen alltid att först utforska de noder med låg poäng, på detta sätt har algoritmen en idé om rikting och kostnad av varje väg, och kan på så sätt ignorera vägar som inte är värda att utforska. En väg som t.ex leder i motsatt rikting av målet skulle väldigt sent, om än inte alls, utforskas. 
+En snabbare sökalgoritm än BFS. Istället för att utforska alla noder samtidigt utan diskriminering så ges varje nod två värden/poäng: vad det kostar att komma till noden från begynnelsenoden genom den nuvarande kortaste kända vägen, och hur långt det är till målet från noden. Dessa värden slås ihop till ett värde som blir den totala poägen av en nod. När grafen utforskas prioriterar algoritmen alltid att först utforska de noder med låg poäng, på detta sätt har algoritmen en idé om rikting och kostnad av varje väg, och kan på så sätt ignorera vägar som inte är värda att utforska. En väg som t.ex leder i motsatt rikting av målet skulle väldigt sent, om eller inte alls, utforskas. 
 
 
 Funktionalitet av varje fil:
