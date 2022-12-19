@@ -553,7 +553,6 @@ while running:
         tank.update_screen(screen)
    
 
-    flag.update_screen(screen)
     
     menu_screen.blit(screen, screen_offset)
     
