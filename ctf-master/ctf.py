@@ -50,7 +50,7 @@ settings_menu = False
 game_mode_menu = False
 map_menu = False
 running = False
-current_mode = "Multiplayer"
+current_mode = "Singleplayer"
 current_map_string = "Map 1"
 
 #   Define the current level
@@ -467,9 +467,6 @@ box_c_handler.pre_solve = collision_bullet_box
 
 #----- Main Loop -----#
 
-
-x = (menu_screen.get_width() - screen.get_width())/2
-y = (menu_screen.get_height() - screen.get_height())/2
 
 #-- Control whether the game run
 
