@@ -2,6 +2,7 @@ import pygame
 
 class Button():
     def __init__(self, width, height, center_x, center_y, button_colour, button_hover_colour):
+        """ Creates a rectangle with the given parameters and position """
         self.rect = pygame.Rect(0, 0, width, height)
         self.rect.center = (center_x, center_y)
         self.clicked = False
@@ -11,6 +12,7 @@ class Button():
         
 
     def click(self):
+        """ Checks if the button was clicked or not """
         action = False
         #get mouse position
         pos = pygame.mouse.get_pos()
@@ -33,7 +35,10 @@ class Button():
         return action
 
     def draw(self, surface, text, font, text_colour):
-
+        """
+        Draws a button rectangle and writes the given texten 
+        in the center of the rectangle
+        """
         pygame.draw.rect(surface, self.current_colour, self.rect, border_radius = 10)
 
         textobject = font.render(text, 1, text_colour)
@@ -43,6 +48,7 @@ class Button():
         surface.blit(textobject, textrect)
     
     def write_text(surface, text, font, text_colour, c_x, c_y):
+        """ Writes text at the given position"""
         textobject = font.render(text, 1, text_colour)
         textrect = textobject.get_rect()
         textrect.center = (c_x, c_y)

@@ -79,21 +79,21 @@ b_hover_colour = (40, 40, 40)
 
 #Creates the buttons
 
-#--Start menu
+#--Start menu buttons
 play_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
 settings_button = button.Button(300, 100, width/2, height/2, button_colour, b_hover_colour)
 quit_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
 
-#--Settings menu
+#--Settings menu buttons
 game_mode_button = button.Button(400, 100, width/2, height/2, button_colour, b_hover_colour)
 map_button = button.Button(450, 100, width/2, height/4, button_colour, b_hover_colour)
 back_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
 
-#--GameMode menu
+#--GameMode menu buttons
 single_player_button = button.Button(400, 100, width/3, height/4, button_colour, b_hover_colour)
 hot_seat_mult_button = button.Button(400, 100, width*2/3, height/4, button_colour, b_hover_colour)
 
-#--Map menu
+#--Map menu buttons
 map1_button = button.Button(200, 100, width/4, height/4, button_colour, b_hover_colour)
 map2_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
 map3_button = button.Button(200, 100, width*3/4, height/4, button_colour, b_hover_colour)
@@ -102,6 +102,7 @@ map3_button = button.Button(200, 100, width*3/4, height/4, button_colour, b_hove
 #Creates a start menu
 
 while menu:
+    # Creates the start menu and handles its events
     if start_menu:
         pygame.display.set_caption("Main menu")
         menu_screen.fill(menu_colour)
@@ -134,7 +135,7 @@ while menu:
                     pygame.quit()
                     sys.exit()
 
-    
+    # Creates the settings menu and handles its events
     if settings_menu:
         pygame.display.set_caption("Settings")
         menu_screen.fill(menu_colour)
@@ -164,7 +165,7 @@ while menu:
                     start_menu = True
                     settings_menu = False
 
-
+    #Creates the game_mode_menu and handles its events
     if game_mode_menu:
         pygame.display.set_caption("Game-mode menu")
         menu_screen.fill(menu_colour)
@@ -198,6 +199,7 @@ while menu:
                     game_mode_menu = False
                     settings_menu = True
     
+    # Creates the map menu and handles its events
     if map_menu:
         pygame.display.set_caption("Map Selection")
         menu_screen.fill(menu_colour)
@@ -247,9 +249,9 @@ while menu:
     pygame.display.update()    
     main_clock.tick(FRAMERATE)
 
-# Provided no arguments the default mode is multiplayer
-if not SINGLEPLAYER or MULTIPLAYER:
-    MULTIPLAYER = True
+# Provided no arguments the default mode is singleplayer
+if not SINGLEPLAYER or not MULTIPLAYER:
+    SINGLEPLAYER = True
 
 #-- Generate the background
 background = pygame.Surface(screen.get_size())
@@ -487,6 +489,7 @@ while running:
                 # Relocate the flag
                 flag.x = current_map.flag_position[0]
                 flag.y = current_map.flag_position[1]
+                
                 # Respawn each tank and show their scores
                 for index, tank in enumerate(tanks_list):
                     tank.respawn()
