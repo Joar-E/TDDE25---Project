@@ -9,6 +9,8 @@ import math
 import sounds
 import button
 #----- Initialisation -----#
+# Initialize arg parser
+mode = sys.argv[1:]
 
 
 #-- Initialise the display
@@ -39,9 +41,8 @@ main_clock = pygame.time.Clock()
 FRAMERATE = 50
 SCREEN_RESOLUTION = (1360, 768)
 # These are later assigned a constant value
-SINGLEPLAYER = False
-MULTIPLAYER= False
-#COOLDOWN_FOR_BULLET = 0
+singleplayer = False
+multiplayer  = False
 
 #-- Variables
 menu = True
@@ -61,8 +62,18 @@ tanks_list          = []
 ai_list             = []
 
 
+# Player mode is determined
+if mode == ['--singleplayer']:
+    singleplayer = True
+    current_mode = "Singleplayer"
+    
+if mode == ['--hot-multiplayer']:
+    multiplayer = True
+    current_mode = "Multiplayer"
+
+
 #-- Resize the screen to the size of the current level
-menu_screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)#(current_map.rect().size)
+menu_screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 screen = pygame.Surface(current_map.rect().size)
 screen_offset = tuple([(x[0]-x[1])/2 for x in zip( menu_screen.get_size(), screen.get_size() )])
 
@@ -100,6 +111,7 @@ map3_button = button.Button(200, 100, width*3/4, height/4, button_colour, b_hove
 
 
 #Creates a start menu
+
 
 while menu:
     # Creates the start menu and handles its events
@@ -177,13 +189,13 @@ while menu:
         button.Button.write_text(menu_screen, f"Current mode: {current_mode}", font, white, width/2, height/2)
         
         if single_player_button.click():
-            SINGLEPLAYER = True
-            MULTIPLAYER = False
+            singleplayer = True
+            multiplayer = False
             current_mode = "Single Player"
 
         if hot_seat_mult_button.click():
-            MULTIPLAYER = True
-            SINGLEPLAYER = False
+            multiplayer = True
+            singleplayer = False
             current_mode = "Multiplayer"
 
         if back_button.click():
@@ -250,8 +262,8 @@ while menu:
     main_clock.tick(FRAMERATE)
 
 # Provided no arguments the default mode is singleplayer
-if not SINGLEPLAYER or not MULTIPLAYER:
-    SINGLEPLAYER = True
+if not singleplayer and not multiplayer:
+    singleplayer = True
 
 #-- Generate the background
 background = pygame.Surface(screen.get_size())
@@ -313,12 +325,12 @@ for i in range(0, len(current_map.start_positions)):
     tanks_list.append(tank)
     game_objects_list.append(tank)
     # Make every tank except one ai 
-    if SINGLEPLAYER:
+    if singleplayer:
         if i > 0:
             ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
             ai_list.append(ai_tank)
     # Make every tank except two ai
-    if MULTIPLAYER:
+    if multiplayer:
         if i > 1:
             ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
             ai_list.append(ai_tank)
@@ -349,9 +361,9 @@ player2 = {"Index": 1,
            }
 
 # Add human players
-if SINGLEPLAYER:
+if singleplayer:
     player_list = [player1] 
-if MULTIPLAYER:
+if multiplayer:
     player_list = [player1, player2]
 
 
@@ -378,8 +390,8 @@ def tank_movement_handler(player_list):
 def play_explosion_anim(bullet):
     """ Playes the explosion animation at the coordinates of the bullet"""
     game_objects_list.append(bullet.explosion(space))
-
-    for obj in game_objects_list:
+    
+    for obj in game_objects_list.copy():
         if isinstance(obj, gameobjects.Explosion):
             if obj.stop:
                 game_objects_list.remove(obj)
