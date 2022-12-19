@@ -40,9 +40,7 @@ main_clock = pygame.time.Clock()
 #-- Constants
 FRAMERATE = 50
 SCREEN_RESOLUTION = (1360, 768)
-# These are later assigned a constant value
-singleplayer = False
-multiplayer  = False
+
 
 #-- Variables
 menu = True
@@ -51,6 +49,9 @@ settings_menu = False
 game_mode_menu = False
 map_menu = False
 running = False
+
+singleplayer = False
+multiplayer  = False
 current_mode = "Singleplayer"
 current_map_string = "Map 1"
 
@@ -66,16 +67,20 @@ ai_list             = []
 if mode == ['--singleplayer']:
     singleplayer = True
     current_mode = "Singleplayer"
-    
+
 if mode == ['--hot-multiplayer']:
     multiplayer = True
     current_mode = "Multiplayer"
 
 
-#-- Resize the screen to the size of the current level
+#-- Create the screen and the the surface which sice will depend on the current map
+#-- Also defines the screenoffset so that the game screen always is at the center of the screen
 menu_screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 screen = pygame.Surface(current_map.rect().size)
 screen_offset = tuple([(x[0]-x[1])/2 for x in zip( menu_screen.get_size(), screen.get_size() )])
+
+score_screen = pygame.Surface((200, 400))
+score_screen_pos = (menu_screen.get_width() - 200, menu_screen.get_height()/3)
 
 #-- Creating and rendering fonts and colours
 width = menu_screen.get_width()
@@ -87,27 +92,55 @@ button_colour = (120, 120, 120)
 b_hover_colour = (40, 40, 40)
 
 
-
 #Creates the buttons
 
 #--Start menu buttons
-play_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
-settings_button = button.Button(300, 100, width/2, height/2, button_colour, b_hover_colour)
-quit_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
+play_button = button.Button(200, 100, width/2, height/4,
+                            button_colour, b_hover_colour, 
+                            "Play", font, white)
+
+settings_button = button.Button(300, 100, width/2, height/2,
+                                button_colour, b_hover_colour, 
+                                "Settings", font, white)
+
+quit_button = button.Button(200, 100, width/2, height*3/4,
+                            button_colour, b_hover_colour, 
+                            "Quit", font, white)
 
 #--Settings menu buttons
-game_mode_button = button.Button(400, 100, width/2, height/2, button_colour, b_hover_colour)
-map_button = button.Button(450, 100, width/2, height/4, button_colour, b_hover_colour)
-back_button = button.Button(200, 100, width/2, height*3/4, button_colour, b_hover_colour)
+game_mode_button = button.Button(400, 100, width/2, height/2, 
+                                 button_colour, b_hover_colour, 
+                                 "Game Modes", font, white)
+
+map_button = button.Button(450, 100, width/2, height/4, 
+                           button_colour, b_hover_colour, 
+                           "Map Selection", font, white)
+
+back_button = button.Button(200, 100, width/2, height*3/4, 
+                            button_colour, b_hover_colour, 
+                            "Back", font, white)
 
 #--GameMode menu buttons
-single_player_button = button.Button(400, 100, width/3, height/4, button_colour, b_hover_colour)
-hot_seat_mult_button = button.Button(400, 100, width*2/3, height/4, button_colour, b_hover_colour)
+single_player_button = button.Button(400, 100, width/3, height/4, 
+                                     button_colour, b_hover_colour, 
+                                     "Singleplayer", font, white)
+
+hot_seat_mult_button = button.Button(400, 100, width*2/3, height/4, 
+                                     button_colour, b_hover_colour, 
+                                     "Multiplayer", font, white)
 
 #--Map menu buttons
-map1_button = button.Button(200, 100, width/4, height/4, button_colour, b_hover_colour)
-map2_button = button.Button(200, 100, width/2, height/4, button_colour, b_hover_colour)
-map3_button = button.Button(200, 100, width*3/4, height/4, button_colour, b_hover_colour)
+map1_button = button.Button(200, 100, width/4, height/4,
+                            button_colour, b_hover_colour, 
+                            "Map 1", font, white)
+
+map2_button = button.Button(200, 100, width/2, height/4,
+                            button_colour, b_hover_colour, 
+                            "Map 2", font, white)
+
+map3_button = button.Button(200, 100, width*3/4, height/4, 
+                            button_colour, b_hover_colour, 
+                            "Map 3", font, white)
 
 
 #Creates a start menu
@@ -119,9 +152,9 @@ while menu:
         pygame.display.set_caption("Main menu")
         menu_screen.fill(menu_colour)
 
-        play_button.draw(menu_screen, "Play", font, white)
-        settings_button.draw(menu_screen, "Settings", font, white)
-        quit_button.draw(menu_screen, "Quit", font, white)
+        play_button.draw(menu_screen)
+        settings_button.draw(menu_screen)
+        quit_button.draw(menu_screen)
 
         if play_button.click():
             menu_screen.fill(menu_colour)
@@ -152,9 +185,9 @@ while menu:
         pygame.display.set_caption("Settings")
         menu_screen.fill(menu_colour)
 
-        game_mode_button.draw(menu_screen, "Game Modes", font, white)
-        map_button.draw(menu_screen, "Map Selection", font, white)
-        back_button.draw(menu_screen, "Back", font, white)
+        game_mode_button.draw(menu_screen)
+        map_button.draw(menu_screen)
+        back_button.draw(menu_screen)
 
         if game_mode_button.click():
             settings_menu = False
@@ -182,11 +215,12 @@ while menu:
         pygame.display.set_caption("Game-mode menu")
         menu_screen.fill(menu_colour)
 
-        single_player_button.draw(menu_screen, "Singleplayer", font, white)
-        hot_seat_mult_button.draw(menu_screen, "Multiplayer", font, white)
-        back_button.draw(menu_screen, "Back", font, white)
+        single_player_button.draw(menu_screen)
+        hot_seat_mult_button.draw(menu_screen)
+        back_button.draw(menu_screen)
 
-        button.Button.write_text(menu_screen, f"Current mode: {current_mode}", font, white, width/2, height/2)
+        button.Button.write_text(menu_screen, f"Current mode: {current_mode}", 
+                                 font, white, width/2, height/2)
         
         if single_player_button.click():
             singleplayer = True
@@ -216,15 +250,23 @@ while menu:
         pygame.display.set_caption("Map Selection")
         menu_screen.fill(menu_colour)
 
-        map1_button.draw(menu_screen, "Map 1", font, white)
-        map2_button.draw(menu_screen, "Map 2", font, white)
-        map3_button.draw(menu_screen, "Map 3", font, white)
-        back_button.draw(menu_screen, "Back", font, white)
+        map1_button.draw(menu_screen)
+        map2_button.draw(menu_screen)
+        map3_button.draw(menu_screen)
+        back_button.draw(menu_screen)
 
-        button.Button.write_text(menu_screen, f"Current map: {current_map_string}", font, white, width/2, height/2)
-        button.Button.write_text(menu_screen, "9X9", font, white, width/4, height/4 + 100)
-        button.Button.write_text(menu_screen, "15X11", font, white, width/2, height/4 + 100)
-        button.Button.write_text(menu_screen, "10X5", font, white, width*3/4, height/4 + 100)
+        button.Button.write_text(menu_screen, 
+                                 f"Current map: {current_map_string}", 
+                                 font, white, width/2, height/2)
+
+        button.Button.write_text(menu_screen, "9X9", font, white, 
+                                 width/4, height/4 + 100)
+
+        button.Button.write_text(menu_screen, "15X11", font, white,
+                                 width/2, height/4 + 100)
+
+        button.Button.write_text(menu_screen, "10X5", font, white, 
+                                 width*3/4, height/4 + 100)
 
         if map1_button.click():
             current_map = maps.map0
@@ -564,6 +606,8 @@ while running:
 
     
     menu_screen.blit(screen, screen_offset)
+    menu_screen.blit(score_screen, score_screen_pos)
+
     
     #   Redisplay the entire screen (see double buffer technique)
     pygame.display.flip()
