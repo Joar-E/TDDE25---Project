@@ -49,3 +49,22 @@ En snabbare sökalgoritm än BFS. Istället för att utforska alla noder samtidi
 
 
 Funktionalitet av varje fil:
+
+Hur kallar den på button.py och Explosions i gameobjects.py?
+
+För att skapa bakgrunden av gräs itererar programmet över kartan från maps.py och blittar bilder från data på skärmen, bilderna i sig loadas i filen images.py. 
+
+Mycket av de saker som skapas i själva världen är objekt av klasser och deras relaterade funktioner från gameobjects-filen. De första fysiska objekten som skapas är alla boxes, vilka är instanser av en klass Box, som i sin tur ärver från klassen GamePhysicsObject vilket är en mer generell klass som hanterar saker med fysisk form och rörelse. Boxes skapas genom att funktionen create_boxes iterarar över alla koordinater i den nuvarande kartan, som kommer från filen maps.py. Den skapar då boxobjekt och ger dem en viss bild från data och collision type bestmämt av vilket värde de har i grafen för kartan. Detta görs med en hjälpfunktionen get_box_with_type. De läggs sedan till i listan för game objects och space som hanterar dess fysik. 
+
+Flaggan skapas på ett liknande sätt men den är inte ett fysiskt objekt så den ärver inte av GamePhysicsObject och läggs inte till i space. Startkoordinaten av flaggan tas också från maps.py. 
+För att lägga till baserna kallas gameobjects.py igen för att skapa GameVisibleObject-instanser för att sedan lägga till dem i game_objects_list.
+
+För att begränsa spelplanen där det inte finns boxes så läggs det till barriers. Dessa är segment som som är static bodies, så att de blir som orörliga väggar kring planen. De läggs bara till i space eftersom vi inte är intresserade av att se dem.    
+
+Tanks skapas på ett liknande sätt som boxes. Funktionen create_tanks iterar över kartan och skapar objekt av Tank-klassen med motsvarande sprite från data-katalogen. De läggs både till i en separat lista bara för tanks för att underlätta manipulationen av dem, och vanliga game_objects_list. För att göra tanks till ai så går funktionen genom tanks_list och kallar på Ai-klassen från den separata ai.py-filen för att göra tankobjekt till Ai-objekt. En tank skjuter genom att kalla på funtkionen shoot som är definerad inuti klassen för tanks. Den skapar ett objekt av Bullet-klassen och lägger till den till listan och space på ett liknande sätt som de andra fysiska objekten. 
+
+Movement handlern kallar också på funktioner definerade i Tank-klassen för att få tillgång till deras rörelse och position för att spealren ska kunna styra dem.
+
+Hur objekt ska bete sig när de kolliderar med varandra bestäms i några collision handlers, där varje är specifik för att hantera en typ av kollision. Den enda som aktivt kallar på en annan fil är den för bullets och tanks, som använder många av metoderna för tanks, som att kolla hur mycket hp den har, hur länge sen den respawna och metoden för att respawna den. 
+
+Efter att alla objekt och assets är skapade så startar programmet main/game-loopen, där själva spelet tar plats. För varje iteration av spelet så kallas funktionen decide från ai-filen. Den används för att kontrollera hur ai:n beter sig, och bestämmer i stort sett hur den ska röra sig och om den ska skjuta. Inuti main-loopen kallas också många funktioner från Tank-klassen från gameobjects.py för att hantera allt som kan ske med en tank. De två huvudfunktionerna för varje tank är has_won och try_grab_flag som kollar om kraven för att någon att de två har uppfyllts, båda dessa är metoder av Tank-klassen. 
