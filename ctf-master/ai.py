@@ -21,6 +21,7 @@ def angle_between_vectors(vec1, vec2):
     vec = vec.perpendicular()
     return vec.angle
 
+
 def periodic_difference_of_angles(angle1, angle2): 
     return  (angle1% (2*math.pi)) - (angle2% (2*math.pi))
 
@@ -210,7 +211,6 @@ class Ai:
     def A_star_search(self):
         """
         A* search for finding the shortest path for a tank
-        Once discovered all edges have a value of 1
         """
         # f = g + heuristic, f is the total score of a node
         # g is the cost to get from the start to a certain node
@@ -276,6 +276,7 @@ class Ai:
             x, y = self.flag.x, self.flag.y
         return Vec2d(int(x), int(y))
 
+
     def get_flag(self):
         """ This has to be called to get the flag, since we don't know
             where it is when the Ai object is initialized.
@@ -288,10 +289,12 @@ class Ai:
                     break
         return self.flag
 
+
     def get_tile_of_position(self, position_vector):
         """ Converts and returns the float position of our tank to an integer position. """
         x, y = position_vector
         return Vec2d(int(x), int(y))
+
 
     def get_tile_neighbors(self, coord_vec):
         """ Returns all bordering grid squares of the input coordinate.
@@ -303,6 +306,7 @@ class Ai:
         
  # Find the coordinates of the tiles' four neighbors
         return list(filter(self.filter_tile_neighbors, neighbors))
+
 
     def filter_tile_neighbors (self, coord) -> bool:
         """ Filters the neighboring tiles based on which of tiles

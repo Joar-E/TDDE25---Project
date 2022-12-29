@@ -5,6 +5,7 @@ pygame.mixer.init()
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
+
 def load_sound(file):
     """ Loads a soundfile fron data directory """
     file = os.path.join(main_dir, 'data', file)
