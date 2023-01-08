@@ -79,8 +79,6 @@ menu_screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 screen = pygame.Surface(current_map.rect().size)
 screen_offset = tuple([(x[0]-x[1])/2 for x in zip( menu_screen.get_size(), screen.get_size() )])
 
-score_screen = pygame.Surface((200, 400))
-score_screen_pos = (menu_screen.get_width() - 200, menu_screen.get_height()/3)
 
 #-- Creating and rendering fonts and colours
 width = menu_screen.get_width()
@@ -606,7 +604,6 @@ while running:
 
     
     menu_screen.blit(screen, screen_offset)
-    menu_screen.blit(score_screen, score_screen_pos)
 
     
     #   Redisplay the entire screen (see double buffer technique)
