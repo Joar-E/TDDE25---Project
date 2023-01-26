@@ -107,11 +107,9 @@ class Ai:
         
         while True:
 
-            path = self.A_star_search()
-            if len(path) < 2:
-                #path = self.find_shortest_path()
-                yield
-                continue
+            path = self.A_star_search(False)
+            if not path:
+                path = self.A_star_search(True)
             
             
             path.popleft() # Removes the starting position from the path
@@ -208,7 +206,7 @@ class Ai:
         return h
 
 
-    def A_star_search(self):
+    def A_star_search(self, metal_box_allowed):
         """
         A* search for finding the shortest path for a tank
         """
@@ -239,16 +237,12 @@ class Ai:
             if current == end:
                 # we found our goal, reconstruct path and return it
                 return self.traceback(came_from, current)
-            # Start exploring the current node    
-            for neighbor in self.get_tile_neighbors(Vec2d(current)):
+            # Start exploring the current node
+            for neighbor in self.get_tile_neighbors(Vec2d(current), metal_box_allowed):
                 neighbor = neighbor.int_tuple
                 # the cost from start to neighbor through current
-                # (since every edge has the same value we add a constant 1,
-                # except metal boxes that have an edge cost of 6)
-                if self.currentmap.boxAt(neighbor[0], neighbor[1]) == 3:
-                    tentative_g_score = g_score[current] + 6
-                else:    
-                    tentative_g_score = g_score[current] + 1
+                # (since every edge has the same value we add a constant 1)
+                tentative_g_score = g_score[current] + 1
                 # This path to neighbor has a lower cost than any previous one
                 # (a node that hasn't been discovered yet has a g score of inf)
                 if tentative_g_score < g_score[neighbor]:
@@ -296,7 +290,7 @@ class Ai:
         return Vec2d(int(x), int(y))
 
 
-    def get_tile_neighbors(self, coord_vec):
+    def get_tile_neighbors(self, coord_vec, metal_box_allowed):
         """ Returns all bordering grid squares of the input coordinate.
             A bordering square is only considered accessible if it is grass
             or a wooden box.
@@ -304,8 +298,11 @@ class Ai:
         self.coord_vec = coord_vec
         neighbors = [coord_vec + delta for delta in [(0,1), (-1,0), (0,-1), (1,0)]]
         
- # Find the coordinates of the tiles' four neighbors
-        return list(filter(self.filter_tile_neighbors, neighbors))
+        # Find the coordinates of the tiles' four neighbors
+        if metal_box_allowed:
+            return list(filter(self.filter_tile_neighbors_metal_box, neighbors))
+        else:
+            return list(filter(self.filter_tile_neighbors, neighbors))
 
 
     def filter_tile_neighbors (self, coord) -> bool:
@@ -316,11 +313,23 @@ class Ai:
              and coord[1] <= self.MAX_Y and coord[1] >= 0:
 
             if self.currentmap.boxAt(coord[0], coord[1]) == 0 or \
+               self.currentmap.boxAt(coord[0], coord[1]) == 2:
+                return True
+            return False
+
+
+    def filter_tile_neighbors_metal_box (self, coord) -> bool:
+        """ Filters the neighboring tiles based on which of tiles
+            the tank is allowed on, extended to metal boxes 
+        """
+        if coord[0] <= self.MAX_X and coord[0] >= 0\
+             and coord[1] <= self.MAX_Y and coord[1] >= 0:
+
+            if self.currentmap.boxAt(coord[0], coord[1]) == 0 or \
                self.currentmap.boxAt(coord[0], coord[1]) == 2 or \
                self.currentmap.boxAt(coord[0], coord[1]) == 3:
                 return True
             return False
-
 
 
 SimpleAi = Ai # Legacy
