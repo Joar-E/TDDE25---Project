@@ -138,7 +138,7 @@ class Tank(GamePhysicsObject):
     NORMAL_MAX_SPEED = 2.0
     FLAG_MAX_SPEED = NORMAL_MAX_SPEED * 0.5
     
-    def __init__(self, x, y, orientation, sprite, space):
+    def __init__(self, x, y, orientation, sprite, space, destructable):
         super().__init__(x, y, orientation, sprite, space, True, 2)
         # Define variable used to apply motion to the tanks
         self.acceleration = 0 # 1 forward, 0 for stand still, -1 for backwards
@@ -153,7 +153,7 @@ class Tank(GamePhysicsObject):
         self.score = 0
         self.hit_points = 2
         self.respawn_time = 0
-        
+        self.destructable = destructable
 
     def accelerate(self):
         """ Call this function to make the tank move forward. """

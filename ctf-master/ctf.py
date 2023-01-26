@@ -360,7 +360,7 @@ for i in range(0, len(current_map.start_positions)):
     # Get the starting position of the tank "i"
     pos = current_map.start_positions[i]
     # Create the tank, images.tanks contains the image representing the tank
-    tank = gameobjects.Tank(pos[0], pos[1], pos[2], images.tanks[i], space)
+    tank = gameobjects.Tank(pos[0], pos[1], pos[2], images.tanks[i], space, True)
     # Add the tank to the list of tanks
     tanks_list.append(tank)
     game_objects_list.append(tank)

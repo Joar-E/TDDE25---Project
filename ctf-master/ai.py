@@ -70,7 +70,7 @@ class Ai:
             if hasattr(res.shape, 'parent'):
                 if isinstance(res.shape.parent, gameobjects.Box) or\
                     isinstance(res.shape.parent, gameobjects.Tank):
-                    if getattr(res.shape.parent, "collision_type") in {2, 3}:
+                    if getattr(res.shape.parent, "destructable") == True:
                         if self.tank.can_shoot():
                             self.game_objects_list.append(self.tank.shoot(self.space))
 
