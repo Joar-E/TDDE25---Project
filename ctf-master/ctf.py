@@ -306,19 +306,23 @@ if not singleplayer and not multiplayer:
     singleplayer = True
 
 #-- Generate the background
-background = pygame.Surface(screen.get_size())
+def create_background():
+    """Create game background"""
+    background = pygame.Surface(screen.get_size())
 
-#   Copy the grass tile all over the level area
-for x in range(0, current_map.width):
-    for y in range(0,  current_map.height):
-        # The call to the function "blit" will copy the image
-        # contained in "images.grass" into the "background"
-        # image at the coordinates given as the second argument
-        background.blit(images.grass,  (x*images.TILE_SIZE, y*images.TILE_SIZE))
-
+    #   Copy the grass tile all over the level area
+    for x in range(0, current_map.width):
+        for y in range(0,  current_map.height):
+            # The call to the function "blit" will copy the image
+            # contained in "images.grass" into the "background"
+            # image at the coordinates given as the second argument
+            background.blit(images.grass,  (x*images.TILE_SIZE, y*images.TILE_SIZE))
+    return background
+background = create_background()
 
 #-- Create the boxes
 def create_boxes():
+    """Create boxes according to map layout"""
     for x in range(0, current_map.width):
         for y in range(0,  current_map.height):
             # Get the type of boxes
@@ -332,48 +336,63 @@ def create_boxes():
 create_boxes()
 
 #-- Create the flag
-flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
-game_objects_list.append(flag)
+def create_flag():
+    """Create flag object"""
+    flag = gameobjects.Flag(current_map.flag_position[0], current_map.flag_position[1])
+    game_objects_list.append(flag)
+    return flag
+flag = create_flag()
 
 #-- Create the bases
-for i in range(0, len(current_map.start_positions)):
-    position = current_map.start_positions[i]
-    base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
-    game_objects_list.append(base)
+def create_bases():
+    """Creates the bases where each tank spawns"""
+    for i in range(0, len(current_map.start_positions)):
+        position = current_map.start_positions[i]
+        base = gameobjects.GameVisibleObject(position[0], position[1], images.bases[i])
+        game_objects_list.append(base)
+create_bases()
 
 #Creates barriers
+def create_barriers():
+    """Creates barriers that limit the map"""
+    static_body = space.static_body
+    barrier_list = [pymunk.Segment(static_body, (0, 0), (0, current_map.height), 0.0), 
+    pymunk.Segment(static_body, (0, current_map.height), (current_map.width, current_map.height), 0.0),
+    pymunk.Segment(static_body, (current_map.width, current_map.height), (current_map.width, 0), 0.0),
+    pymunk.Segment(static_body, (current_map.width, 0), (0, 0), 0.0)
+    ]
 
-static_body = space.static_body
-barrier_list = [pymunk.Segment(static_body, (0, 0), (0, current_map.height), 0.0), 
-pymunk.Segment(static_body, (0, current_map.height), (current_map.width, current_map.height), 0.0),
-pymunk.Segment(static_body, (current_map.width, current_map.height), (current_map.width, 0), 0.0),
-pymunk.Segment(static_body, (current_map.width, 0), (0, 0), 0.0)
-]
-
-space.add(*barrier_list)
+    space.add(*barrier_list)
 
 #-- Create the tanks
+def create_ai(tank):
+    """Make tanks into AI"""
+    ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
+    ai_list.append(ai_tank)
 
 
-# Loop over the starting poistion
-for i in range(0, len(current_map.start_positions)):
-    # Get the starting position of the tank "i"
-    pos = current_map.start_positions[i]
-    # Create the tank, images.tanks contains the image representing the tank
-    tank = gameobjects.Tank(pos[0], pos[1], pos[2], images.tanks[i], space, True)
-    # Add the tank to the list of tanks
-    tanks_list.append(tank)
-    game_objects_list.append(tank)
-    # Make every tank except one ai 
-    if singleplayer:
-        if i > 0:
-            ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
-            ai_list.append(ai_tank)
-    # Make every tank except two ai
-    if multiplayer:
-        if i > 1:
-            ai_tank = ai.Ai(tank, game_objects_list, tanks_list, space, current_map)
-            ai_list.append(ai_tank)
+def create_tanks():
+    """Creates tanks according to game mode and map"""
+    # Loop over the starting poistion
+    for i in range(0, len(current_map.start_positions)):
+        # Get the starting position of the tank "i"
+        pos = current_map.start_positions[i]
+        # Create the tank, images.tanks contains the image representing the tank
+        tank = gameobjects.Tank(pos[0], pos[1], pos[2], images.tanks[i], space, True)
+        # Add the tank to the list of tanks
+        tanks_list.append(tank)
+        game_objects_list.append(tank)
+        # Make every tank except one ai 
+        if singleplayer:
+            if i > 0:
+                create_ai(tank)
+        # Make every tank except two ai
+        if multiplayer:
+            if i > 1:
+                create_ai(tank)
+            
+create_tanks()
+
 
 #-- Player dictionaries
 player1 = {"Index": 0,
@@ -437,6 +456,11 @@ def play_explosion_anim(bullet):
                 game_objects_list.remove(obj)
 
 
+def remove_object(object, space):
+    """Removes object from sapce and game object list"""
+    space.remove(object, object.body)
+    game_objects_list.remove(object.parent)
+
 #-- Functions for collision handling
 def collision_bullet_bullet(arb, space, data):
     """Handles collisions between tanks and bullets"""
@@ -460,8 +484,7 @@ def collision_bullet_tank(arb, space, data):
 
     if tank != bullet_shape.parent.tank:
         if bullet_shape.parent in game_objects_list:
-            space.remove(bullet_shape, bullet_shape.body)
-            game_objects_list.remove(bullet_shape.parent)
+            remove_object(bullet_shape, space)
             play_explosion_anim(bullet_shape.parent)
             # If 2000 ticks have passed since tak respawn
             # check tank hit points
@@ -486,11 +509,10 @@ def collision_bullet_box(arb, space, data):
     sounds.box_sound.set_volume(0.2)
     sounds.box_sound.play()
     if bullet_shape.parent in game_objects_list:
-        space.remove(bullet_shape, bullet_shape.body)
-        game_objects_list.remove(bullet_shape.parent)
+        remove_object(bullet_shape, space)
+        
+        remove_object(box, space)
 
-        space.remove(box, box.body)
-        game_objects_list.remove(box.parent)
         play_explosion_anim(bullet_shape.parent)
     return False
 
@@ -499,8 +521,7 @@ def ind_collision_bullet_box(arb, space, data):
     """Handels collisions between bullets and indestructable objects"""
     bullet_shape = arb.shapes[0]
     if bullet_shape.parent in game_objects_list:
-        space.remove(bullet_shape, bullet_shape.body)
-        game_objects_list.remove(bullet_shape.parent)
+        remove_object(bullet_shape, space)
         play_explosion_anim(bullet_shape.parent)
     return False
 
@@ -517,6 +538,33 @@ tank_c_handler.pre_solve = collision_bullet_tank
 box_c_handler = space.add_collision_handler(1, 3)
 box_c_handler.pre_solve = collision_bullet_box
 
+
+def reset_game(tank):
+    sounds.victory_sound.play()
+    # Add 1 to it's score
+    tank.update_score()
+    # Remove the flag
+    tank.drop_flag(flag)
+    # Relocate the flag
+    flag.x = current_map.flag_position[0]
+    flag.y = current_map.flag_position[1]
+    
+    # Respawn each tank and show their scores
+    for index, tank in enumerate(tanks_list):
+        tank.respawn()
+        print(f"Player {index + 1}: {tank.get_score()}")
+    print()
+    for box in game_objects_list:
+        # Find a wooden or iron box
+        if type(box) == gameobjects.Box and \
+        box.movable == True:
+            # remove it from list and space
+            game_objects_list.remove(box)
+            space.remove(box.shape, box.body)
+    # create new ones
+    create_boxes()              
+
+
 #----- Main Loop -----#
 
 
@@ -530,29 +578,7 @@ while running:
     for tank in tanks_list:
             tank.try_grab_flag(flag)
             if tank.has_won():
-                sounds.victory_sound.play()
-                # Add 1 to it's score
-                tank.update_score()
-                # Remove the flag
-                tank.drop_flag(flag)
-                # Relocate the flag
-                flag.x = current_map.flag_position[0]
-                flag.y = current_map.flag_position[1]
-                
-                # Respawn each tank and show their scores
-                for index, tank in enumerate(tanks_list):
-                    tank.respawn()
-                    print(f"Player {index + 1}: {tank.get_score()}")
-                print()
-                for box in game_objects_list:
-                    # Find a wooden or iron box
-                    if type(box) == gameobjects.Box and \
-                    box.movable == True:
-                        # remove it from list and space
-                        game_objects_list.remove(box)
-                        space.remove(box.shape, box.body)
-                # create new ones
-                create_boxes()
+                reset_game(tank)
                 continue
                 
                 #running = False
