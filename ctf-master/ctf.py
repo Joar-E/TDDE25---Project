@@ -34,6 +34,7 @@ import gameobjects
 import maps
 import backgroundinit
 import collisions
+import playermovement
 
 
 skip_update = 0
@@ -307,8 +308,10 @@ while menu:
 if not singleplayer and not multiplayer:
     singleplayer = True
 
+
 #-- Generate the background
 background = backgroundinit.create_background(current_map, screen)
+
 
 #-- Create enviroment and flag
 backgroundinit.create_enviroment(current_map, game_objects_list, space)
@@ -345,57 +348,9 @@ def create_tanks():
 create_tanks()
 
 
-#-- Player dictionaries
-player1 = {"Index": 0,
-           pygame.K_UP: tanks_list[0].accelerate,
-           pygame.K_DOWN: tanks_list[0].decelerate,
-           pygame.K_LEFT: tanks_list[0].turn_left,
-           pygame.K_RIGHT: tanks_list[0].turn_right,
-           pygame.K_SPACE: tanks_list[0].shoot
-           }
-
-# vplayer1 = {
-#            pygame.K_UP: (tanks_list[0].accelerate, tanks_list[0].stop_moving),
-#            pygame.K_DOWN: (tanks_list[0].decelerate, tanks_list[0].stop_moving),
-#            pygame.K_LEFT: (tanks_list[0].turn_left, tanks_list[0].stop_turning),
-#            pygame.K_RIGHT: (tanks_list[0].turn_right, tanks_list[0].stop_moving),
-#            pygame.K_SPACE: (tanks_list[0].shoot, False)
-#            }
-
-player2 = {"Index": 1,
-           pygame.K_w: tanks_list[1].accelerate,
-           pygame.K_s: tanks_list[1].decelerate,
-           pygame.K_a: tanks_list[1].turn_left,
-           pygame.K_d: tanks_list[1].turn_right,
-           pygame.K_q: tanks_list[1].shoot
-           }
-
 # Add human players
-if singleplayer:
-    player_list = [player1] 
-if multiplayer:
-    player_list = [player1, player2]
-
-
-def tank_movement_handler(player_list):
-    """ A function for controlling the playble tanks"""
-
-    for player in player_list:
-        tank = tanks_list[player["Index"]]
-        if event.type == KEYDOWN:
-            if event.key in player:
-                if event.key == list(player)[-1]:
-                    if tank.can_shoot():
-                        game_objects_list.append(player.get(event.key)(space))
-                else:
-                    player.get(event.key)()
-        
-        if event.type == KEYUP:
-            if event.key in {list(player)[1], list(player)[2]} :
-                tank.stop_moving()
-            if event.key in {list(player)[3], list(player)[4]} :
-                tank.stop_turning()
-
+player_list = \
+    playermovement.add_players(tanks_list, singleplayer, multiplayer)
 
 
 #-- Create collision handlers
@@ -469,7 +424,8 @@ while running:
             sounds.flag_sound.play()
             running = False
         
-        tank_movement_handler(player_list)
+        playermovement.tank_movement_handler(player_list, game_objects_list,
+                                            tanks_list, event, space)
 
         
     #-- Update physics

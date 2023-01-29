@@ -3,8 +3,10 @@ import images
 import pymunk
 import pygame
 
+
 #-- Functions for generating the background,
 #-- and the elements it should contain
+
 
 #-- Create the boxes
 def create_boxes(current_map, game_objects_list, space):

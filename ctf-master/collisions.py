@@ -3,7 +3,9 @@ import images
 import sounds
 import pygame
 
+
 #--Contains collisions handlers wrapped in functions for creating them
+
 
 def play_explosion_anim(bullet, game_objects_list, space):
     """ Playes the explosion animation at the coordinates of the bullet"""
